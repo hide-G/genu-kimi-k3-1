@@ -801,7 +801,6 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'Kimi K3',
   },
-  // Kimi K3.1 has the same input support and sampling restrictions as Kimi K3.
   'us.moonshotai.kimi-k3.1': {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'Kimi K3.1',

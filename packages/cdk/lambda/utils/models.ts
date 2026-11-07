@@ -123,8 +123,6 @@ const KIMI_K3_DEFAULT_PARAMS: ConverseInferenceParams = {
   },
 };
 
-// Kimi K3.1 accepts maxTokens up to 1,048,576, but 128000 is used here
-// to keep the output length consistent with Kimi K3.
 // temperature / topP are omitted because the model rejects them
 // (see TEXT_IMAGE_NO_SAMPLING in model.ts).
 const KIMI_K3_1_DEFAULT_PARAMS: ConverseInferenceParams = {
