@@ -656,6 +656,7 @@ navigation:
   speechRecognition: แปลงเสียงพูดเป็นข้อความ
   summary: สรุป
   textGeneration: การสร้างข้อความ
+  textToSpeech: สร้างไฟล์เสียง (Amazon Polly)
   translation: การแปล
   videoAnalysis: การวิเคราะห์วิดีโอ
   videoGeneration: การสร้างวิดีโอ
@@ -773,6 +774,23 @@ summarize:
   result_placeholder: ข้อความที่สรุปจะแสดงที่นี่
   text_to_summarize: ข้อความที่จะสรุป
   title: สรุป
+textToSpeech:
+  audio_label: เสียงที่สร้างขึ้น
+  character_count: '{{current}} / {{max}} ตัวอักษร'
+  download: ดาวน์โหลด
+  engine: เอนจิน
+  format: รูปแบบเอาต์พุต
+  generate: สร้างเสียง
+  input_text: ข้อความที่จะแปลงเป็นเสียง
+  language: ภาษา
+  load_voices_error: ไม่สามารถโหลดรายการเสียงได้ โปรดโหลดหน้าใหม่
+  speed: ความเร็ว ({{speed}} เท่า)
+  status_done: สร้างเสียงเสร็จสมบูรณ์
+  status_generating: กำลังสร้างเสียง
+  text_placeholder: ป้อนข้อความที่จะแปลงเป็นเสียง
+  title: สร้างไฟล์เสียง (Amazon Polly)
+  too_long: ข้อความยาวเกินไป
+  voice: เสียง
 transcribe:
   audio_source_lost: การถอดเสียงหยุดลงเนื่องจากไม่สามารถใช้แหล่งเสียงได้อีกต่อไป
   detailed_parameters: ตั้งค่าขั้นสูงแบบกำหนดเอง

@@ -513,6 +513,7 @@ navigation:
   speechRecognition: 음성 인식
   summary: 요약
   textGeneration: 텍스트 생성
+  textToSpeech: 음성 파일 생성 (Amazon Polly)
   translation: 번역
   videoAnalysis: 비디오 분석
   videoGeneration: 비디오 생성
@@ -658,6 +659,23 @@ svg:
   show_code: 코드 표시
   show_preview: 미리보기 표시
   svg_error: 'SVG 출력 오류: '
+textToSpeech:
+  audio_label: 생성된 음성
+  character_count: '{{current}} / {{max}} 자'
+  download: 다운로드
+  engine: 엔진
+  format: 출력 형식
+  generate: 음성 생성
+  input_text: 음성으로 변환할 텍스트
+  language: 언어
+  load_voices_error: 음성 목록을 불러오지 못했습니다. 페이지를 새로고침하세요.
+  speed: 속도 ({{speed}}배)
+  status_done: 음성 생성이 완료되었습니다
+  status_generating: 음성을 생성하는 중입니다
+  text_placeholder: 음성으로 변환할 텍스트를 입력하세요
+  title: 음성 파일 생성 (Amazon Polly)
+  too_long: 텍스트가 너무 깁니다.
+  voice: 음성
 transcribe:
   audio_source_lost: 오디오 소스를 더 이상 사용할 수 없어 전사가 중지되었습니다
   detailed_parameters: 세부 매개변수

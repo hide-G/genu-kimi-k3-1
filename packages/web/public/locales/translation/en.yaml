@@ -951,6 +951,7 @@ navigation:
   speechRecognition: Speech Recognition
   summary: Summary
   textGeneration: Text Generation
+  textToSpeech: Audio File Creation (Amazon Polly)
   translation: Translation
   videoAnalysis: Video Analysis
   videoGeneration: Video Generation
@@ -1103,6 +1104,23 @@ svg:
   show_code: Show Code
   show_preview: Show Preview
   svg_error: 'SVG output error: '
+textToSpeech:
+  audio_label: Generated audio
+  character_count: '{{current}} / {{max}} characters'
+  download: Download
+  engine: Engine
+  format: Output format
+  generate: Generate audio
+  input_text: Text to convert to speech
+  language: Language
+  load_voices_error: Failed to load the voice list. Please reload the page.
+  speed: Speed ({{speed}}x)
+  status_done: Audio generation completed
+  status_generating: Generating audio
+  text_placeholder: Enter the text to convert to speech
+  title: Audio File Creation (Amazon Polly)
+  too_long: The text is too long.
+  voice: Voice
 transcribe:
   audio_source_lost: Transcription stopped because the audio source is no longer available
   detailed_parameters: Detailed parameters

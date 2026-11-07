@@ -797,6 +797,7 @@ navigation:
   speechRecognition: 音声認識
   summary: 要約
   textGeneration: 文章生成
+  textToSpeech: 音声ファイル作成 (Amazon Polly)
   translation: 翻訳
   videoAnalysis: 映像分析
   videoGeneration: 動画生成
@@ -926,6 +927,23 @@ svg:
   show_code: コードを表示
   show_preview: プレビューを表示
   svg_error: 'SVG出力エラー: '
+textToSpeech:
+  audio_label: 生成された音声
+  character_count: '{{current}} / {{max}} 文字'
+  download: ダウンロード
+  engine: エンジン
+  format: 出力形式
+  generate: 音声を生成
+  input_text: 音声に変換するテキスト
+  language: 言語
+  load_voices_error: 音声の一覧を取得できませんでした。ページを再読み込みしてください。
+  speed: 速度 ({{speed}}倍)
+  status_done: 音声の生成が完了しました
+  status_generating: 音声を生成しています
+  text_placeholder: 音声に変換するテキストを入力してください
+  title: 音声ファイル作成 (Amazon Polly)
+  too_long: テキストが長すぎます。
+  voice: 音声
 transcribe:
   audio_source_lost: 音声ソースが利用できなくなったため、文字起こしを停止しました
   detailed_parameters: 詳細なパラメータ

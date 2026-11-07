@@ -1148,6 +1148,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // Hide diagram generation
       meetingMinutes: true, // Hide meeting minutes generation
       voiceChat: true, // Hide voice chat
+      textToSpeech: true, // Hide text-to-speech (Amazon Polly)
     },
   },
 };
@@ -1170,7 +1171,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "videoAnalyzer": true,
       "diagram": true,
       "meetingMinutes": true,
-      "voiceChat": true
+      "voiceChat": true,
+      "textToSpeech": true
     }
   }
 }

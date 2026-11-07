@@ -1035,6 +1035,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // 다이어그램 생성 숨기기
       meetingMinutes: true, // 회의록 생성 숨기기
       voiceChat: true, // 음성 채팅 숨기기
+      textToSpeech: true, // 음성 파일 생성(Amazon Polly) 숨기기
     },
   },
 };
@@ -1057,7 +1058,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "videoAnalyzer": true,
       "diagram": true,
       "meetingMinutes": true,
-      "voiceChat": true
+      "voiceChat": true,
+      "textToSpeech": true
     }
   }
 }

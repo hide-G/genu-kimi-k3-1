@@ -639,6 +639,7 @@ navigation:
   speechRecognition: Nhận dạng giọng nói
   summary: Tóm tắt
   textGeneration: Tạo văn bản
+  textToSpeech: Tạo tệp âm thanh (Amazon Polly)
   translation: Dịch thuật
   videoAnalysis: Phân tích video
   videoGeneration: Tạo video
@@ -751,6 +752,23 @@ summarize:
   result_placeholder: Văn bản được tóm tắt sẽ được hiển thị ở đây
   text_to_summarize: Văn bản muốn tóm tắt
   title: Tóm tắt
+textToSpeech:
+  audio_label: Âm thanh đã tạo
+  character_count: '{{current}} / {{max}} ký tự'
+  download: Tải xuống
+  engine: Công cụ
+  format: Định dạng đầu ra
+  generate: Tạo âm thanh
+  input_text: Văn bản cần chuyển thành giọng nói
+  language: Ngôn ngữ
+  load_voices_error: Không thể tải danh sách giọng nói. Vui lòng tải lại trang.
+  speed: Tốc độ ({{speed}}x)
+  status_done: Đã tạo xong âm thanh
+  status_generating: Đang tạo âm thanh
+  text_placeholder: Nhập văn bản cần chuyển thành giọng nói
+  title: Tạo tệp âm thanh (Amazon Polly)
+  too_long: Văn bản quá dài.
+  voice: Giọng nói
 transcribe:
   audio_source_lost: Phiên âm đã dừng vì nguồn âm thanh không còn khả dụng
   detailed_parameters: Tham số chi tiết
