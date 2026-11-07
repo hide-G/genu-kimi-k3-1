@@ -123,6 +123,16 @@ const KIMI_K3_DEFAULT_PARAMS: ConverseInferenceParams = {
   },
 };
 
+// Kimi K3.1 accepts maxTokens up to 1,048,576, but 128000 is used here
+// to keep the output length consistent with Kimi K3.
+// temperature / topP are omitted because the model rejects them
+// (see TEXT_IMAGE_NO_SAMPLING in model.ts).
+const KIMI_K3_1_DEFAULT_PARAMS: ConverseInferenceParams = {
+  inferenceConfig: {
+    maxTokens: 128000,
+  },
+};
+
 const CLAUDE_SONNET_4_DEFAULT_PARAMS: ConverseInferenceParams = {
   inferenceConfig: {
     maxTokens: 64000,
@@ -2297,6 +2307,24 @@ export const BEDROCK_TEXT_GEN_MODELS: {
   },
   'global.moonshotai.kimi-k3': {
     defaultParams: KIMI_K3_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  // Kimi K3.1 is available only through cross-region inference profiles
+  // (us.moonshotai.kimi-k3.1 / global.moonshotai.kimi-k3.1).
+  'us.moonshotai.kimi-k3.1': {
+    defaultParams: KIMI_K3_1_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'global.moonshotai.kimi-k3.1': {
+    defaultParams: KIMI_K3_1_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
     createConverseStreamCommandInput: createConverseStreamCommandInput,
