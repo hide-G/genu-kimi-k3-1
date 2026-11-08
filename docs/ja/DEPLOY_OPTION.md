@@ -1144,6 +1144,40 @@ const envs: Record<string, Partial<StackInput>> = {
 
 Prompt optimization のサポート状況は [こちら](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-optimize.html) をご参照ください。
 
+### OCR (Amazon Textract) ツールの有効化
+
+OCR ツールは、画像または 1 ページの PDF/TIFF から Amazon Textract (`DetectDocumentText`) で文字を検出し、各行・各単語の信頼度とバウンディングボックスを表示します。
+デフォルトで表示されます。非表示にする場合は `hiddenUseCases.textract` を指定します (後述の「特定のユースケースを非表示にする」を参照)。
+
+Amazon Textract を呼び出すリージョンは `textractRegion` で指定します。`null` (デフォルト) の場合は GenU をデプロイしたリージョンが使用されます。
+
+> [!NOTE]
+> Amazon Textract は全てのリージョンで利用できるわけではありません。`textractRegion` を設定する前に[対応リージョン](https://docs.aws.amazon.com/general/latest/gr/textract.html)をご確認ください。`ap-northeast-1` (東京) は指定可能な値です。
+> アップロードしたドキュメントは指定したリージョンに送信されるため、データレジデンシー要件にご留意ください。
+> アップロードされたファイルはバイト列として Amazon Textract に渡されるため、Textract のリージョンはファイル用バケットのリージョンと異なっていても構いません。アップロードされたファイルは文字検出の直後にバケットから削除されます。
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    textractRegion: 'ap-northeast-1',
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+{
+  "context": {
+    "textractRegion": "ap-northeast-1"
+  }
+}
+```
+
 ### VOICEVOX による音声ファイル作成の有効化
 
 「音声ファイル作成」ユースケース (`hiddenUseCases.textToSpeech` で非表示にしていない場合) に、[VOICEVOX](https://voicevox.hiroshiba.jp/) の音声（ブイブイ・コバコなど）を追加できます。VOICEVOX ENGINE は AWS Lambda MicroVMs 上で動かします。`voicevox` パラメータを設定しない場合、VOICEVOX 関連の API ルートと IAM 権限は作成されず、画面にも VOICEVOX は表示されません。
@@ -1220,7 +1254,8 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // ダイアグラム生成を非表示
       meetingMinutes: true, // 議事録生成を非表示
       voiceChat: true, // 音声チャットを非表示
-      textToSpeech: true, // 音声ファイル作成(Amazon Polly)を非表示
+      textToSpeech: true, // 音声ファイル作成を非表示
+      textract: true, // OCR (Amazon Textract) ツールを非表示
     },
   },
 };
@@ -1244,11 +1279,16 @@ const envs: Record<string, Partial<StackInput>> = {
       "diagram": true,
       "meetingMinutes": true,
       "voiceChat": true,
-      "textToSpeech": true
+      "textToSpeech": true,
+      "textract": true
     }
   }
 }
 ```
+
+音声ファイル作成について: 生成した音声ファイルは共有のファイルバケット (`BUCKET_NAME`) に保存され、チャットの添付ファイルと同様に**自動では削除されません**。ダウンロード用の署名付き URL の有効期限は 3600 秒ですが、オブジェクト自体は手動で削除するまで (管理者が S3 ライフサイクルルールを追加した場合はそのルールに従って削除されるまで) バケットに残ります。
+
+音声ファイル作成の SSML 入力: 入力モードを「SSML」に切り替えると、`<break>` (休止)、`<sub>` (置換読み)、`<phoneme>` (発音) などの SSML タグを使って、読み方や間を指定できます。SSML ガイドと挿入ツールが画面に表示されます。選択中のエンジンが対応していないタグ (例: neural エンジンの `<emphasis>`) や、Amazon Polly が一切対応していないタグは、リクエスト前に拒否されます。SSML モードでは、課金対象の文字数 (タグを除く) が 3000 文字以下、タグを含むテキスト全体が 6000 文字以下である必要があり、長い休止や遅い速度は音声を長くするため、Amazon Polly の 10 分の上限に達することがあります。詳しくは [Amazon Polly の SSML のドキュメント](https://docs.aws.amazon.com/polly/latest/dg/ssml.html) を参照してください。 生成されるファイル名は `speech-<voice>-<yyyyMMdd>-<HHmmss>.<ext>` (例: `speech-kazuha-20261108-173045.mp3`) です。ダウンロード時にファイル名が重複しないよう、タイムスタンプにはブラウザのローカルタイムゾーンの時刻が使われ、サーバーは有効な `yyyyMMdd-HHmmss` の値のみ受け付けます (それ以外の場合は現在の UTC 時刻を使用します)。
 
 ## ユースケースビルダーの設定
 

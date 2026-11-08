@@ -23,3 +23,4 @@ export * from './agent-builder';
 export * from './mcp-servers';
 export * from './polly';
 export * from './voicevox';
+export * from './textract';

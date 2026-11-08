@@ -1125,6 +1125,40 @@ There is no direct option to enable the prompt optimization tool, but the parame
 
 For Prompt optimization support status, please refer to [this link](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-optimize.html).
 
+### Enabling OCR (Amazon Textract) Tool
+
+The OCR tool detects text in an image or a one-page PDF/TIFF with Amazon Textract (`DetectDocumentText`) and shows each line/word with its confidence and bounding box.
+The tool is displayed by default and can be hidden with `hiddenUseCases.textract` (see "Hiding Specific Use Cases" below).
+
+The region used to call Amazon Textract is set with `textractRegion`. If it is `null` (default), the region where GenU is deployed is used.
+
+> [!NOTE]
+> Amazon Textract is not available in every region. Please check the [supported regions](https://docs.aws.amazon.com/general/latest/gr/textract.html) before setting `textractRegion`. `ap-northeast-1` (Tokyo) is a valid value.
+> Uploaded documents are sent to the region you specify, so please consider your data residency requirements.
+> The uploaded file is passed to Amazon Textract as bytes, so the Textract region may differ from the region of the file bucket. The uploaded file is deleted from the bucket right after text detection.
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    textractRegion: 'ap-northeast-1',
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+{
+  "context": {
+    "textractRegion": "ap-northeast-1"
+  }
+}
+```
+
 ### Enabling VOICEVOX in Audio File Creation
 
 You can add [VOICEVOX](https://voicevox.hiroshiba.jp/) voices (such as Vivi-Vivi Cobaco) to the "Audio File Creation" use case (unless it is hidden with `hiddenUseCases.textToSpeech`). VOICEVOX ENGINE runs on AWS Lambda MicroVMs. If the `voicevox` parameter is not set, no VOICEVOX API routes or IAM permissions are created and VOICEVOX is not shown on the screen.
@@ -1201,7 +1235,8 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // Hide diagram generation
       meetingMinutes: true, // Hide meeting minutes generation
       voiceChat: true, // Hide voice chat
-      textToSpeech: true, // Hide text-to-speech (Amazon Polly)
+      textToSpeech: true, // Hide audio file creation
+      textract: true, // Hide OCR (Amazon Textract) tool
     },
   },
 };
@@ -1225,11 +1260,16 @@ const envs: Record<string, Partial<StackInput>> = {
       "diagram": true,
       "meetingMinutes": true,
       "voiceChat": true,
-      "textToSpeech": true
+      "textToSpeech": true,
+      "textract": true
     }
   }
 }
 ```
+
+About audio file creation: Generated audio files are saved in the shared file bucket (`BUCKET_NAME`) and are **not deleted automatically**, the same as chat attachments. The presigned download URL expires after 3600 seconds, but the object itself remains in the bucket until it is removed manually (or by an S3 lifecycle rule if the administrator adds one).
+
+SSML input for audio file creation: Switch the input mode to "SSML" to control pronunciation and pauses with SSML tags such as `<break>` (pause), `<sub>` (substitute reading) and `<phoneme>` (pronunciation). An SSML guide and insert tools are shown on the page. Tags that the selected engine does not support (for example `<emphasis>` with the neural engine) and tags that Amazon Polly never supports are rejected before the request is sent. In SSML mode, the billed characters (tags excluded) must be 3000 or less and the whole text including tags must be 6000 characters or less. Long pauses and slow rates make the audio longer, so the 10-minute limit of Amazon Polly can be reached. For details, see the [Amazon Polly SSML documentation](https://docs.aws.amazon.com/polly/latest/dg/ssml.html). The generated file is named `speech-<voice>-<yyyyMMdd>-<HHmmss>.<ext>` (for example `speech-kazuha-20261108-173045.mp3`); the timestamp is in the browser's local time zone so that downloads do not collide, and the server accepts only a valid `yyyyMMdd-HHmmss` value (otherwise it uses the current UTC time).
 
 ## Use Case Builder Configuration
 

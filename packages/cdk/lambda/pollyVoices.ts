@@ -10,7 +10,7 @@ import {
   PollyLanguage,
   PollyVoice,
 } from 'generative-ai-use-cases';
-import { ENGINES } from './utils/pollyUtils';
+import { ENGINES, mapPollyError } from './utils/pollyUtils';
 
 const headers = {
   'Content-Type': 'application/json',
@@ -77,7 +77,10 @@ export const handler = async (
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ message: 'languageCode is invalid.' }),
+        body: JSON.stringify({
+          message: 'languageCode is invalid.',
+          code: 'INVALID_REQUEST',
+        }),
       };
     }
 
@@ -108,10 +111,11 @@ export const handler = async (
     return { statusCode: 200, headers, body: JSON.stringify(response) };
   } catch (error) {
     console.log(error);
+    const { statusCode, message, code } = mapPollyError(error);
     return {
-      statusCode: 500,
+      statusCode,
       headers,
-      body: JSON.stringify({ message: 'Internal Server Error' }),
+      body: JSON.stringify({ message, code }),
     };
   }
 };

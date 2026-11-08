@@ -108,6 +108,7 @@ import { router as meetingMinutesRouter } from './routes/meetingMinutes';
 import { router as speechToSpeechRouter } from './routes/speechToSpeech';
 import { router as pollyRouter } from './routes/polly';
 import { router as voicevoxRouter } from './routes/voicevox';
+import { router as textractRouter } from './routes/textract';
 
 // Mount routes
 app.use('/predict', predictRouter);
@@ -128,6 +129,7 @@ app.use('/meeting-minutes', meetingMinutesRouter);
 app.use('/speech-to-speech', speechToSpeechRouter);
 app.use('/polly', pollyRouter);
 app.use('/voicevox', voicevoxRouter);
+app.use('/textract', textractRouter);
 
 // Error handler
 app.use(

@@ -1012,6 +1012,40 @@ const envs: Record<string, Partial<StackInput>> = {
 
 프롬프트 최적화 지원 상태는 [이 링크](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-optimize.html)를 참조하세요.
 
+### OCR(Amazon Textract) 도구 활성화
+
+OCR 도구는 이미지 또는 1페이지 PDF/TIFF에서 Amazon Textract(`DetectDocumentText`)로 텍스트를 감지하고 각 줄/단어의 신뢰도와 바운딩 박스를 표시합니다.
+기본적으로 표시되며, 숨기려면 `hiddenUseCases.textract`를 지정합니다(아래 "특정 사용 사례 숨기기" 참조).
+
+Amazon Textract를 호출하는 리전은 `textractRegion`으로 지정합니다. `null`(기본값)인 경우 GenU를 배포한 리전이 사용됩니다.
+
+> [!NOTE]
+> Amazon Textract는 모든 리전에서 사용할 수 있는 것은 아닙니다. `textractRegion`을 설정하기 전에 [지원 리전](https://docs.aws.amazon.com/general/latest/gr/textract.html)을 확인하세요. `ap-northeast-1`(도쿄)은 지정 가능한 값입니다.
+> 업로드한 문서는 지정한 리전으로 전송되므로 데이터 레지던시 요건을 고려하세요.
+> 업로드한 파일은 바이트로 Amazon Textract에 전달되므로 Textract 리전은 파일 버킷의 리전과 달라도 됩니다. 업로드한 파일은 텍스트 감지 직후 버킷에서 삭제됩니다.
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    textractRegion: 'ap-northeast-1',
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+{
+  "context": {
+    "textractRegion": "ap-northeast-1"
+  }
+}
+```
+
 ### VOICEVOX 음성 파일 생성 활성화
 
 "음성 파일 생성" 사용 사례(`hiddenUseCases.textToSpeech`로 숨기지 않은 경우)에 [VOICEVOX](https://voicevox.hiroshiba.jp/) 음성(브이브이 코바코 등)을 추가할 수 있습니다. VOICEVOX ENGINE은 AWS Lambda MicroVMs에서 실행됩니다. `voicevox` 매개변수를 설정하지 않으면 VOICEVOX 관련 API 경로와 IAM 권한이 생성되지 않으며 화면에도 표시되지 않습니다.
@@ -1088,7 +1122,8 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // 다이어그램 생성 숨기기
       meetingMinutes: true, // 회의록 생성 숨기기
       voiceChat: true, // 음성 채팅 숨기기
-      textToSpeech: true, // 음성 파일 생성(Amazon Polly) 숨기기
+      textToSpeech: true, // 음성 파일 생성 숨기기
+      textract: true, // OCR(Amazon Textract) 도구 숨기기
     },
   },
 };
@@ -1112,11 +1147,16 @@ const envs: Record<string, Partial<StackInput>> = {
       "diagram": true,
       "meetingMinutes": true,
       "voiceChat": true,
-      "textToSpeech": true
+      "textToSpeech": true,
+      "textract": true
     }
   }
 }
 ```
+
+음성 파일 생성 관련: 생성된 음성 파일은 공유 파일 버킷(`BUCKET_NAME`)에 저장되며, 채팅 첨부 파일과 마찬가지로 **자동으로 삭제되지 않습니다**. 다운로드용 서명된 URL은 3600초 후에 만료되지만, 객체 자체는 수동으로 삭제할 때까지(관리자가 S3 수명 주기 규칙을 추가한 경우 해당 규칙에 따라 삭제될 때까지) 버킷에 남아 있습니다.
+
+음성 파일 생성의 SSML 입력: 입력 모드를 "SSML"로 전환하면 `<break>`(일시 정지), `<sub>`(대체 읽기), `<phoneme>`(발음) 등의 SSML 태그로 발음과 끊어 읽기를 지정할 수 있습니다. 화면에 SSML 가이드와 삽입 도구가 표시됩니다. 선택한 엔진이 지원하지 않는 태그(예: neural 엔진의 `<emphasis>`)와 Amazon Polly가 전혀 지원하지 않는 태그는 요청 전에 거부됩니다. SSML 모드에서는 과금 대상 문자 수(태그 제외)가 3000자 이하, 태그를 포함한 전체 텍스트가 6000자 이하여야 하며, 긴 일시 정지나 느린 속도는 오디오를 길게 만들어 Amazon Polly의 10분 제한에 도달할 수 있습니다. 자세한 내용은 [Amazon Polly SSML 문서](https://docs.aws.amazon.com/polly/latest/dg/ssml.html)를 참조하세요. 생성되는 파일 이름은 `speech-<voice>-<yyyyMMdd>-<HHmmss>.<ext>`(예: `speech-kazuha-20261108-173045.mp3`)입니다. 다운로드 시 파일 이름이 겹치지 않도록 타임스탬프에는 브라우저의 로컬 시간대 시각이 사용되며, 서버는 유효한 `yyyyMMdd-HHmmss` 값만 허용합니다(그렇지 않으면 현재 UTC 시각을 사용합니다).
 
 ## Use Case Builder 구성
 

@@ -29,6 +29,7 @@ const baseStackInputSchema = z.object({
       voiceChat: z.boolean().optional(),
       transcribe: z.boolean().optional(),
       textToSpeech: z.boolean().optional(),
+      textract: z.boolean().optional(),
     })
     .default({}),
   // API
@@ -160,6 +161,8 @@ const baseStackInputSchema = z.object({
     )
     .default([]),
   inlineAgents: z.boolean().default(false),
+  // Textract (OCR tool). null -> stack region
+  textractRegion: z.string().nullish(),
   // Agent Core Runtime
   agentBuilderEnabled: z.boolean().default(false),
   createGenericAgentCoreRuntime: z.boolean().default(false),
@@ -320,6 +323,8 @@ export const processedStackInputSchema = baseStackInputSchema.extend({
   ),
   // Processed agentCoreRegion (null -> modelRegion)
   agentCoreRegion: z.string(),
+  // Processed textractRegion (null -> region)
+  textractRegion: z.string().optional(),
   // Computed from VPC configuration (computed in parameter.ts)
   isAgentCoreNetworkPrivate: z.boolean().optional(),
   // Branding configuration

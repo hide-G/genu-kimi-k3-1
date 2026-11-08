@@ -27,6 +27,7 @@ import GenerateVideoPage from './pages/GenerateVideoPage';
 import OptimizePromptPage from './pages/OptimizePromptPage';
 import TranscribePage from './pages/TranscribePage';
 import TextToSpeechPage from './pages/TextToSpeechPage';
+import TextractPage from './pages/TextractPage';
 import MeetingMinutesPage from './pages/MeetingMinutesPage';
 import AgentChatPage from './pages/AgentChatPage';
 import FlowChatPage from './pages/FlowChatPage';
@@ -170,6 +171,12 @@ const routes: RouteObject[] = [
     ? {
         path: '/text-to-speech',
         element: <TextToSpeechPage />,
+      }
+    : null,
+  enabled('textract')
+    ? {
+        path: '/textract',
+        element: <TextractPage />,
       }
     : null,
   {
