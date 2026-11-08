@@ -513,7 +513,7 @@ navigation:
   speechRecognition: 음성 인식
   summary: 요약
   textGeneration: 텍스트 생성
-  textract: 텍스트 추출 (OCR)
+  textract: 텍스트 추출
   translation: 번역
   videoAnalysis: 비디오 분석
   videoGeneration: 비디오 생성
@@ -688,7 +688,7 @@ textract:
   selected_file: '선택한 파일: {{name}}'
   supported_files: '지원 형식: JPEG, PNG, 1페이지 PDF, 1페이지 TIFF (최대 {{size}} MB)'
   table_caption: 감지된 텍스트 ({{count}}행)
-  title: OCR (Amazon Textract)
+  title: 텍스트 추출
   uploading: 업로드 중...
   view_label: 표시 단위
   view_lines: 줄

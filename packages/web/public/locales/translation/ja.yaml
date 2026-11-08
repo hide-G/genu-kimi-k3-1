@@ -797,7 +797,7 @@ navigation:
   speechRecognition: 音声認識
   summary: 要約
   textGeneration: 文章生成
-  textract: 文字抽出 (OCR)
+  textract: 文字抽出
   translation: 翻訳
   videoAnalysis: 映像分析
   videoGeneration: 動画生成
@@ -956,7 +956,7 @@ textract:
   selected_file: '選択中のファイル: {{name}}'
   supported_files: '対応形式: JPEG, PNG, 1 ページの PDF, 1 ページの TIFF (最大 {{size}} MB)'
   table_caption: 検出されたテキスト ({{count}} 件)
-  title: OCR (Amazon Textract)
+  title: 文字抽出
   uploading: アップロード中...
   view_label: 表示単位
   view_lines: 行

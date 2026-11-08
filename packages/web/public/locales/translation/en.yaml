@@ -951,7 +951,7 @@ navigation:
   speechRecognition: Speech Recognition
   summary: Summary
   textGeneration: Text Generation
-  textract: Text Extraction (OCR)
+  textract: Text Extraction
   translation: Translation
   videoAnalysis: Video Analysis
   videoGeneration: Video Generation
@@ -1133,7 +1133,7 @@ textract:
   selected_file: 'Selected file: {{name}}'
   supported_files: 'Supported: JPEG, PNG, one-page PDF, one-page TIFF (up to {{size}} MB)'
   table_caption: Detected text ({{count}} rows)
-  title: OCR (Amazon Textract)
+  title: Text Extraction
   uploading: Uploading...
   view_label: Display unit
   view_lines: Lines

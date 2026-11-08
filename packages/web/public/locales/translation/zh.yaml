@@ -544,7 +544,7 @@ navigation:
   speechRecognition: 语音识别
   summary: 摘要
   textGeneration: 文本生成
-  textract: 文字提取 (OCR)
+  textract: 文字提取
   translation: 翻译
   videoAnalysis: 视频分析
   videoGeneration: 视频生成
@@ -668,7 +668,7 @@ textract:
   selected_file: 已选择的文件：{{name}}
   supported_files: 支持格式：JPEG、PNG、单页 PDF、单页 TIFF（最大 {{size}} MB）
   table_caption: 检测到的文字（{{count}} 行）
-  title: OCR (Amazon Textract)
+  title: 文字提取
   uploading: 上传中...
   view_label: 显示单位
   view_lines: 行
