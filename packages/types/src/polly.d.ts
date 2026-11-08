@@ -20,13 +20,19 @@ export type ListPollyVoicesResponse = {
   voices: PollyVoice[];
 };
 
+export type PollyTextType = 'text' | 'ssml';
+
 export type SynthesizeSpeechRequest = {
   text: string;
+  // 'ssml': text is SSML written by the user (default: 'text')
+  textType?: PollyTextType;
   voiceId: string;
   engine: PollyEngine;
   languageCode: string;
   outputFormat: PollyOutputFormat;
   speed: number;
+  // Client local time (yyyyMMdd-HHmmss) used in the file name. Optional.
+  timestamp?: string;
 };
 
 export type SynthesizeSpeechResponse = {

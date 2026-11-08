@@ -18,8 +18,11 @@ import {
 } from 'generative-ai-use-cases';
 import {
   OUTPUT_FORMATS,
+  buildFileName,
   buildSpeechInput,
-  validateSynthesizeRequest,
+  isWithinRequestLimit,
+  mapPollyError,
+  validateSynthesizeRequestDetailed,
 } from './utils/pollyUtils';
 
 const headers = {
@@ -27,15 +30,20 @@ const headers = {
   'Access-Control-Allow-Origin': '*',
 };
 
-const badRequest = (message: string): APIGatewayProxyResult => ({
+const badRequest = (
+  message: string,
+  code = 'INVALID_REQUEST'
+): APIGatewayProxyResult => ({
   statusCode: 400,
   headers,
-  body: JSON.stringify({ message }),
+  body: JSON.stringify({ message, code }),
 });
 
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
+  // Errors after Polly returned the audio come from S3 (PutObject / presign)
+  let stage: 'polly' | 'storage' = 'polly';
   try {
     let req: Partial<SynthesizeSpeechRequest>;
     try {
@@ -44,14 +52,26 @@ export const handler = async (
       return badRequest('Request body must be valid JSON.');
     }
 
-    const validationError = validateSynthesizeRequest(req);
+    const validationError = validateSynthesizeRequestDetailed(req);
     if (validationError) {
-      return badRequest(validationError);
+      return badRequest(validationError.message, validationError.code);
     }
-    const { text, voiceId, engine, languageCode, outputFormat, speed } =
-      req as SynthesizeSpeechRequest;
+    const {
+      text,
+      textType,
+      voiceId,
+      engine,
+      languageCode,
+      outputFormat,
+      speed,
+      timestamp,
+    } = req as SynthesizeSpeechRequest;
 
-    const input = buildSpeechInput(text, speed);
+    const input = buildSpeechInput(text, speed, textType);
+    if (!isWithinRequestLimit(input.text)) {
+      const mapped = mapPollyError({ name: 'TextLengthExceededException' });
+      return badRequest(mapped.message, mapped.code);
+    }
     const format = OUTPUT_FORMATS[outputFormat];
 
     const polly = new PollyClient({});
@@ -70,9 +90,10 @@ export const handler = async (
       throw new Error('Polly returned an empty audio stream.');
     }
     const audio = await speech.AudioStream.transformToByteArray();
+    stage = 'storage';
 
     // Same key convention as getFileUploadSignedUrl: XXXXX/filename
-    const fileName = `speech-${voiceId.toLowerCase()}.${format.extension}`;
+    const fileName = buildFileName(voiceId, format.extension, timestamp);
     const key = `${uuidv4()}/${fileName}`;
 
     const s3 = new S3Client({});
@@ -109,10 +130,13 @@ export const handler = async (
     return { statusCode: 200, headers, body: JSON.stringify(response) };
   } catch (error) {
     console.log(error);
+    const { statusCode, message, code } = mapPollyError(error, {
+      storage: stage === 'storage',
+    });
     return {
-      statusCode: 500,
+      statusCode,
       headers,
-      body: JSON.stringify({ message: 'Internal Server Error' }),
+      body: JSON.stringify({ message, code }),
     };
   }
 };
