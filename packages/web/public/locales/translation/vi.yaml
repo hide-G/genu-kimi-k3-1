@@ -639,7 +639,7 @@ navigation:
   speechRecognition: Nhận dạng giọng nói
   summary: Tóm tắt
   textGeneration: Tạo văn bản
-  textract: Trích xuất văn bản (OCR)
+  textract: Trích xuất văn bản
   translation: Dịch thuật
   videoAnalysis: Phân tích video
   videoGeneration: Tạo video
@@ -781,7 +781,7 @@ textract:
   selected_file: 'Tệp đã chọn: {{name}}'
   supported_files: 'Hỗ trợ: JPEG, PNG, PDF một trang, TIFF một trang (tối đa {{size}} MB)'
   table_caption: Văn bản đã phát hiện ({{count}} hàng)
-  title: OCR (Amazon Textract)
+  title: Trích xuất văn bản
   uploading: Đang tải lên...
   view_label: Đơn vị hiển thị
   view_lines: Dòng

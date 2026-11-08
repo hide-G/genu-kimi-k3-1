@@ -413,14 +413,16 @@ const TextractPage: React.FC = () => {
                   </p>
                 ) : (
                   <div className="mt-4 max-h-[60vh] overflow-auto">
-                    <table className="w-full text-left text-sm">
+                    <table className="w-max min-w-full text-left text-sm">
                       <caption className="mb-1 text-left text-sm text-gray-500">
                         {t('textract.table_caption', { count: rows.length })}
                       </caption>
                       <thead className="sticky top-0 bg-gray-100">
                         <tr>
-                          <th scope="col" className="min-w-32 p-1">
-                            {t('textract.col_text')}
+                          <th scope="col" className="p-1">
+                            <div className="min-w-64 max-w-sm">
+                              {t('textract.col_text')}
+                            </div>
                           </th>
                           <th
                             scope="col"
@@ -455,8 +457,10 @@ const TextractPage: React.FC = () => {
                               }`}
                               onMouseEnter={() => setHoveredId(row.id)}
                               onMouseLeave={() => setHoveredId(null)}>
-                              <td className="min-w-32 break-words p-1">
-                                {row.text}
+                              <td className="p-1">
+                                <div className="min-w-64 max-w-sm break-words">
+                                  {row.text}
+                                </div>
                               </td>
                               <td className="whitespace-nowrap p-1 text-xs tabular-nums">
                                 {row.confidence.toFixed(2)}

@@ -1125,9 +1125,9 @@ There is no direct option to enable the prompt optimization tool, but the parame
 
 For Prompt optimization support status, please refer to [this link](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-optimize.html).
 
-### Enabling OCR (Amazon Textract) Tool
+### Enabling the Text Extraction Tool
 
-The OCR tool detects text in an image or a one-page PDF/TIFF with Amazon Textract (`DetectDocumentText`) and shows each line/word with its confidence and bounding box.
+The Text Extraction tool detects text in an image or a one-page PDF/TIFF with Amazon Textract (`DetectDocumentText`) and shows each line/word with its confidence and bounding box.
 The tool is displayed by default and can be hidden with `hiddenUseCases.textract` (see "Hiding Specific Use Cases" below).
 
 The region used to call Amazon Textract is set with `textractRegion`. If it is `null` (default), the region where GenU is deployed is used.
@@ -1182,7 +1182,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // Hide diagram generation
       meetingMinutes: true, // Hide meeting minutes generation
       voiceChat: true, // Hide voice chat
-      textract: true, // Hide OCR (Amazon Textract) tool
+      textract: true, // Hide text extraction
     },
   },
 };

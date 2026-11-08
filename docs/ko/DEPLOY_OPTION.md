@@ -1012,9 +1012,9 @@ const envs: Record<string, Partial<StackInput>> = {
 
 프롬프트 최적화 지원 상태는 [이 링크](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-optimize.html)를 참조하세요.
 
-### OCR(Amazon Textract) 도구 활성화
+### 텍스트 추출 도구 활성화
 
-OCR 도구는 이미지 또는 1페이지 PDF/TIFF에서 Amazon Textract(`DetectDocumentText`)로 텍스트를 감지하고 각 줄/단어의 신뢰도와 바운딩 박스를 표시합니다.
+텍스트 추출 도구는 이미지 또는 1페이지 PDF/TIFF에서 Amazon Textract(`DetectDocumentText`)로 텍스트를 감지하고 각 줄/단어의 신뢰도와 바운딩 박스를 표시합니다.
 기본적으로 표시되며, 숨기려면 `hiddenUseCases.textract`를 지정합니다(아래 "특정 사용 사례 숨기기" 참조).
 
 Amazon Textract를 호출하는 리전은 `textractRegion`으로 지정합니다. `null`(기본값)인 경우 GenU를 배포한 리전이 사용됩니다.
@@ -1069,7 +1069,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // 다이어그램 생성 숨기기
       meetingMinutes: true, // 회의록 생성 숨기기
       voiceChat: true, // 음성 채팅 숨기기
-      textract: true, // OCR(Amazon Textract) 도구 숨기기
+      textract: true, // 텍스트 추출 숨기기
     },
   },
 };

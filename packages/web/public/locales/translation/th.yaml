@@ -656,7 +656,7 @@ navigation:
   speechRecognition: แปลงเสียงพูดเป็นข้อความ
   summary: สรุป
   textGeneration: การสร้างข้อความ
-  textract: ดึงข้อความ (OCR)
+  textract: ดึงข้อความ
   translation: การแปล
   videoAnalysis: การวิเคราะห์วิดีโอ
   videoGeneration: การสร้างวิดีโอ
@@ -803,7 +803,7 @@ textract:
   selected_file: 'ไฟล์ที่เลือก: {{name}}'
   supported_files: 'รองรับ: JPEG, PNG, PDF หนึ่งหน้า, TIFF หนึ่งหน้า (สูงสุด {{size}} MB)'
   table_caption: ข้อความที่ตรวจพบ ({{count}} แถว)
-  title: OCR (Amazon Textract)
+  title: ดึงข้อความ
   uploading: กำลังอัปโหลด...
   view_label: หน่วยการแสดงผล
   view_lines: บรรทัด

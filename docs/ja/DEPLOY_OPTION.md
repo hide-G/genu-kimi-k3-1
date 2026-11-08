@@ -1144,9 +1144,9 @@ const envs: Record<string, Partial<StackInput>> = {
 
 Prompt optimization のサポート状況は [こちら](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-optimize.html) をご参照ください。
 
-### OCR (Amazon Textract) ツールの有効化
+### 文字抽出ツールの有効化
 
-OCR ツールは、画像または 1 ページの PDF/TIFF から Amazon Textract (`DetectDocumentText`) で文字を検出し、各行・各単語の信頼度とバウンディングボックスを表示します。
+文字抽出ツールは、画像または 1 ページの PDF/TIFF から Amazon Textract (`DetectDocumentText`) で文字を検出し、各行・各単語の信頼度とバウンディングボックスを表示します。
 デフォルトで表示されます。非表示にする場合は `hiddenUseCases.textract` を指定します (後述の「特定のユースケースを非表示にする」を参照)。
 
 Amazon Textract を呼び出すリージョンは `textractRegion` で指定します。`null` (デフォルト) の場合は GenU をデプロイしたリージョンが使用されます。
@@ -1201,7 +1201,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // ダイアグラム生成を非表示
       meetingMinutes: true, // 議事録生成を非表示
       voiceChat: true, // 音声チャットを非表示
-      textract: true, // OCR (Amazon Textract) ツールを非表示
+      textract: true, // 文字抽出を非表示
     },
   },
 };
