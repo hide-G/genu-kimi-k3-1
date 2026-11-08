@@ -25,6 +25,7 @@ import {
   PiNotebook,
   PiGraph,
   PiMagnifyingGlass,
+  PiScan,
 } from 'react-icons/pi';
 import { Outlet } from 'react-router-dom';
 import Drawer, { ItemProps } from './components/Drawer';
@@ -282,6 +283,14 @@ const App: React.FC = () => {
           label: t('navigation.textToSpeech'),
           to: '/text-to-speech',
           icon: <PiWaveform />,
+          display: 'tool' as const,
+        }
+      : null,
+    enabled('textract')
+      ? {
+          label: t('navigation.textract'),
+          to: '/textract',
+          icon: <PiScan />,
           display: 'tool' as const,
         }
       : null,

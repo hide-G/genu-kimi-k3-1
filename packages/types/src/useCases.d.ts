@@ -12,6 +12,7 @@ export type HiddenUseCases = {
   voiceChat?: boolean;
   transcribe?: boolean;
   textToSpeech?: boolean;
+  textract?: boolean;
 };
 
 export type HiddenUseCasesKeys = keyof HiddenUseCases;

@@ -22,3 +22,4 @@ export * from './agent-core';
 export * from './agent-builder';
 export * from './mcp-servers';
 export * from './polly';
+export * from './textract';

@@ -41,6 +41,7 @@ import {
 
 export interface BackendApiProps {
   readonly modelRegion: string;
+  readonly textractRegion?: string;
   readonly modelIds: ModelConfiguration[];
   readonly imageGenerationModelIds: ModelConfiguration[];
   readonly videoGenerationModelIds: ModelConfiguration[];
@@ -219,6 +220,8 @@ export class Api extends Construct {
         USER_POOL_ID: userPool.userPoolId,
         USER_POOL_CLIENT_ID: userPoolClient.userPoolClientId,
         MODEL_REGION: modelRegion,
+        // Textract (OCR tool)
+        TEXTRACT_REGION: props.textractRegion ?? Stack.of(this).region,
         MODEL_IDS: JSON.stringify(modelIds),
         IMAGE_GENERATION_MODEL_IDS: JSON.stringify(imageGenerationModelIds),
         VIDEO_GENERATION_MODEL_IDS: JSON.stringify(videoGenerationModelIds),
@@ -318,6 +321,15 @@ export class Api extends Construct {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['polly:SynthesizeSpeech', 'polly:DescribeVoices'],
+        resources: ['*'],
+      })
+    );
+
+    // Grant Textract permissions (OCR tool, synchronous text detection only)
+    apiHandler.role?.addToPrincipalPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['textract:DetectDocumentText'],
         resources: ['*'],
       })
     );
@@ -772,6 +784,9 @@ export class Api extends Construct {
     const polly = api.root.addResource('polly');
     polly.addResource('voices').addMethod('GET');
     polly.addResource('synthesize').addMethod('POST');
+    // --- Routes for Textract OCR tool ---
+    const textract = api.root.addResource('textract');
+    textract.addResource('detect').addMethod('POST');
 
     // --- Routes from SpeechToSpeech Construct (v5) ---
     api.root.addResource('speech-to-speech').addMethod('POST');
