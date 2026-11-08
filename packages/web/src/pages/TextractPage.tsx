@@ -246,7 +246,7 @@ const TextractPage: React.FC = () => {
           <div className="mt-4 flex flex-col gap-4 lg:flex-row">
             {file && (
               <Card
-                className="lg:basis-1/2"
+                className="min-w-0 lg:basis-2/5"
                 label={t('textract.preview_title')}>
                 {hasPreview ? (
                   <div className="relative mt-2 inline-block max-w-full">
@@ -305,7 +305,7 @@ const TextractPage: React.FC = () => {
 
             {result && (
               <Card
-                className={file ? 'lg:basis-1/2' : 'w-full'}
+                className={file ? 'min-w-0 lg:basis-3/5' : 'w-full'}
                 label={t('textract.results_title')}>
                 <p className="mt-1 text-sm text-gray-500">
                   {t('textract.region_used', { region: result.region })}
@@ -419,17 +419,23 @@ const TextractPage: React.FC = () => {
                       </caption>
                       <thead className="sticky top-0 bg-gray-100">
                         <tr>
-                          <th scope="col" className="p-1">
+                          <th scope="col" className="min-w-32 p-1">
                             {t('textract.col_text')}
                           </th>
-                          <th scope="col" className="p-1">
+                          <th
+                            scope="col"
+                            className="whitespace-nowrap p-1 text-xs">
                             {t('textract.col_confidence')}
                           </th>
-                          <th scope="col" className="p-1">
+                          <th
+                            scope="col"
+                            className="whitespace-nowrap p-1 text-xs">
                             {t('textract.col_box')}
                           </th>
                           {pixelSize && (
-                            <th scope="col" className="p-1">
+                            <th
+                              scope="col"
+                              className="whitespace-nowrap p-1 text-xs">
                               {t('textract.col_box_px')}
                             </th>
                           )}
@@ -449,17 +455,19 @@ const TextractPage: React.FC = () => {
                               }`}
                               onMouseEnter={() => setHoveredId(row.id)}
                               onMouseLeave={() => setHoveredId(null)}>
-                              <td className="break-all p-1">{row.text}</td>
-                              <td className="whitespace-nowrap p-1">
+                              <td className="min-w-32 break-words p-1">
+                                {row.text}
+                              </td>
+                              <td className="whitespace-nowrap p-1 text-xs tabular-nums">
                                 {row.confidence.toFixed(2)}
                               </td>
-                              <td className="whitespace-nowrap p-1">
+                              <td className="whitespace-nowrap p-1 text-xs tabular-nums">
                                 {[b.left, b.top, b.width, b.height]
                                   .map(formatRatio)
                                   .join(', ')}
                               </td>
                               {px && (
-                                <td className="whitespace-nowrap p-1">
+                                <td className="whitespace-nowrap p-1 text-xs tabular-nums">
                                   {[px.left, px.top, px.width, px.height].join(
                                     ', '
                                   )}
