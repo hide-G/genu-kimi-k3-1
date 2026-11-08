@@ -255,6 +255,14 @@ export class GenerativeAiUseCasesStack extends Stack {
       speechToSpeechTaskFunctionArn:
         speechToSpeech.speechToSpeechTaskFunctionArn,
       speechToSpeechModelIds: params.speechToSpeechModelIds,
+      // VOICEVOX
+      voicevox: params.voicevox?.enabled
+        ? {
+            region: params.voicevox.region,
+            microvmImageArn: params.voicevox.microvmImageArn,
+            enginePort: params.voicevox.enginePort,
+          }
+        : undefined,
       // IP restrictions
       allowedIpV4AddressRanges: params.allowedIpV4AddressRanges ?? undefined,
       allowedIpV6AddressRanges: params.allowedIpV6AddressRanges ?? undefined,
@@ -400,6 +408,7 @@ export class GenerativeAiUseCasesStack extends Stack {
         : undefined,
       // Frontend
       hiddenUseCases: params.hiddenUseCases,
+      voicevoxEnabled: !!params.voicevox?.enabled && !params.closedNetworkMode,
       // Custom Domain
       cert: props.cert,
       hostName: params.hostName,
@@ -543,6 +552,12 @@ export class GenerativeAiUseCasesStack extends Stack {
 
     new CfnOutput(this, 'HiddenUseCases', {
       value: JSON.stringify(params.hiddenUseCases),
+    });
+
+    new CfnOutput(this, 'VoicevoxEnabled', {
+      value: (
+        !!params.voicevox?.enabled && !params.closedNetworkMode
+      ).toString(),
     });
 
     new CfnOutput(this, 'SpeechToSpeechNamespace', {

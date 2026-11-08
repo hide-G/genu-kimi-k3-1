@@ -1159,6 +1159,59 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### Enabling VOICEVOX in Audio File Creation
+
+You can add [VOICEVOX](https://voicevox.hiroshiba.jp/) voices (such as Vivi-Vivi Cobaco) to the "Audio File Creation" use case (unless it is hidden with `hiddenUseCases.textToSpeech`). VOICEVOX ENGINE runs on AWS Lambda MicroVMs. If the `voicevox` parameter is not set, no VOICEVOX API routes or IAM permissions are created and VOICEVOX is not shown on the screen.
+
+**Edit parameter.ts**
+
+```typescript
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    voicevox: {
+      enabled: true,
+      region: 'ap-northeast-1', // Region of AWS Lambda MicroVMs (may differ from the GenU region)
+      microvmImageArn:
+        'arn:aws:lambda:ap-northeast-1:<account-id>:microvm-image:<image-name>', // Specify the ARN, not the image name
+      // enginePort: 50021, // Defaults to 50021
+    },
+  },
+};
+```
+
+**Edit cdk.json**
+
+```json
+{
+  "context": {
+    "voicevox": {
+      "enabled": true,
+      "region": "ap-northeast-1",
+      "microvmImageArn": "arn:aws:lambda:ap-northeast-1:<account-id>:microvm-image:<image-name>"
+    }
+  }
+}
+```
+
+**How to build the MicroVM image**
+
+The Dockerfile of the MicroVM image is a single line. Always pin the tag to a version (Vivi-Vivi Cobaco, styleId 127, is bundled from `cpu-arm64-0.26.1`).
+
+```dockerfile
+FROM --platform=linux/arm64 voicevox/voicevox_engine:cpu-arm64-0.26.1
+```
+
+Specify the ARN of the created image (`arn:aws:lambda:<region>:<account-id>:microvm-image:<image-name>`) in `microvmImageArn`. GenU starts a MicroVM when a character is first selected, and it is suspended and terminated automatically while idle. Right after startup it can take tens of seconds, during which the screen retries automatically.
+
+**Notes**
+
+- It cannot be combined with `closedNetworkMode` (the MicroVM endpoint is public HTTPS). Synthesis fails with an error if both are specified.
+- **The credit is mandatory.** When publishing or posting VOICEVOX audio, you must show "VOICEVOX:<character name>" ([VOICEVOX voice model terms](https://github.com/VOICEVOX/voicevox_vvm/blob/main/README.md)). It is shown on the screen and inside the generated MP4 automatically, but include it in the post text as well when posting to X.
+- Available characters are limited to the allow list in `packages/common/src/application/voicevox.ts`. The initial list contains only characters that can be used commercially and non-commercially with credit notation alone (please re-check each term). Check the terms of each character before adding characters with individual conditions.
+- Follow the [terms of Vivi-Vivi Cobaco](https://vv-cobaco.com/terms). To use illustrations of Cobaco as a background, check the illustration terms separately from the voice terms.
+- The per-request limit for VOICEVOX is provisionally 500 characters. Measure and adjust it so that it stays within the API Gateway timeout (29 seconds).
+- The identity running the deployment does not need MicroVM permissions such as `lambda:RunMicrovm` (they are granted to the `ApiHandler` role).
+
 ### Hiding Specific Use Cases
 
 You can hide use cases with the following options.

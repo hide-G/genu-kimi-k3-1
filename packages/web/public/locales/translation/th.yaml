@@ -803,6 +803,24 @@ textToSpeech:
   input_text: ข้อความที่จะแปลงเป็นเสียง
   language: ภาษา
   load_voices_error: ไม่สามารถโหลดรายการเสียงได้ โปรดโหลดหน้าใหม่
+  mp4_create: 🎬 สร้าง MP4
+  mp4_creating: 'กำลังสร้าง MP4... {{percent}}%'
+  mp4_description: X ไม่รองรับการโพสต์ไฟล์เสียงอย่างเดียว คุณจึงสร้าง MP4 (H.264 + AAC) ที่ใช้รูปภาพหรือข้อความเป็นพื้นหลังได้
+  mp4_done: สร้าง MP4 แล้ว
+  mp4_download: ดาวน์โหลด MP4
+  mp4_error_decode: เบราว์เซอร์นี้อ่านเสียงไม่ได้ โปรดสร้างใหม่เป็น mp3 หรือ wav
+  mp4_error_fetch: ไม่สามารถดึงไฟล์เสียงได้
+  mp4_error_generic: สร้าง MP4 ไม่สำเร็จ
+  mp4_error_unsupported: เบราว์เซอร์นี้ไม่รองรับการสร้างวิดีโอ
+  mp4_image_alt: ตัวอย่างรูปภาพพื้นหลังที่เลือก
+  mp4_image_clear: ยกเลิกรูปภาพ
+  mp4_image_label: รูปภาพ (ไม่บังคับ)
+  mp4_image_notice: โปรดตรวจสอบสิทธิ์ของรูปภาพที่เลือกด้วยความรับผิดชอบของคุณเอง
+  mp4_realtime_note: การสร้างใช้เวลาเท่ากับความยาวของเสียง โปรดเปิดหน้านี้ไว้จนกว่าจะเสร็จ
+  mp4_section_title: MP4 สำหรับโพสต์ไปยัง X
+  mp4_too_long: 'วิดีโอจะยาวประมาณ {{seconds}} วินาที อาจเกินขีดจำกัดความยาวของ X (2 นาที 20 วินาทีสำหรับบัญชีทั่วไป)'
+  mp4_video_label: วิดีโอที่สร้าง
+  mp4_webm_warning: เบราว์เซอร์นี้ไม่สามารถส่งออก MP4 ได้ จึงโพสต์ไปยัง X ตามที่เป็นอยู่ไม่ได้
   speed: ความเร็ว ({{speed}} เท่า)
   ssml_billed_hint: จำนวนอักขระที่เรียกเก็บเงิน ไม่รวมแท็ก
   ssml_duration_note: ในโหมด SSML การหยุดนาน (<break>) หรืออัตราความเร็วที่ช้า (<prosody rate>) จะทำให้เสียงยาวขึ้นและอาจถึงขีดจำกัด 10 นาที
@@ -886,6 +904,18 @@ textToSpeech:
   title: สร้างไฟล์เสียง
   too_long: ข้อความยาวเกินไป
   voice: เสียง
+  voicevox_cobaco_illust_notice: หากต้องการใช้ภาพประกอบของ Vivi-Vivi Cobaco เป็นพื้นหลัง ต้องตรวจสอบข้อกำหนดการใช้ภาพประกอบแยกจากข้อกำหนดของเสียง
+  voicevox_credit: 'เครดิต: {{credit}}'
+  voicevox_credit_notice: 'เสียงของ VOICEVOX ต้องระบุเครดิต "{{credit}}"'
+  voicevox_disabled_note: ใช้งานไม่ได้ขณะใช้ VOICEVOX
+  voicevox_label: VOICEVOX
+  voicevox_none: ไม่ใช้ (Amazon Polly)
+  voicevox_option: '{{character}} ({{style}})'
+  voicevox_ssml_note: VOICEVOX ไม่รองรับ SSML (ใช้การป้อนข้อความธรรมดา)
+  voicevox_starting: กำลังเตรียม VOICEVOX โปรดรอสักครู่...
+  voicevox_terms: 'ข้อกำหนดการใช้งาน: {{character}}'
+  voicevox_timeout: การเตรียม VOICEVOX ใช้เวลานาน โปรดลองอีกครั้งในภายหลัง
+  voicevox_x_notice: 'เมื่อโพสต์ไปยัง X โปรดใส่ "{{credit}}" ในข้อความโพสต์ด้วย'
 textract:
   clear: ล้าง
   col_box: กรอบ (left, top, width, height) [0-1]

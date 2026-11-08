@@ -668,6 +668,24 @@ textToSpeech:
   input_text: 要转换为语音的文本
   language: 语言
   load_voices_error: 无法加载语音列表。请重新加载页面。
+  mp4_create: 🎬 创建 MP4
+  mp4_creating: '正在创建 MP4… {{percent}}%'
+  mp4_description: X 无法单独发布音频文件，因此可以创建以图片或文本为背景的 MP4（H.264 + AAC）。
+  mp4_done: 已创建 MP4
+  mp4_download: 下载 MP4
+  mp4_error_decode: 此浏览器无法读取该音频。请改用 mp3 或 wav 重新生成。
+  mp4_error_fetch: 无法获取音频文件。
+  mp4_error_generic: 创建 MP4 失败。
+  mp4_error_unsupported: 此浏览器不支持创建视频。
+  mp4_image_alt: 所选背景图片的预览
+  mp4_image_clear: 取消图片
+  mp4_image_label: 图片（可选）
+  mp4_image_notice: 所选图片的权利请由您自行负责确认。
+  mp4_realtime_note: 创建所需时间与音频时长相同。完成前请保持此页面打开。
+  mp4_section_title: 用于发布到 X 的 MP4
+  mp4_too_long: '视频长度约为 {{seconds}} 秒，可能超过 X 的时长限制（普通账号为 2 分 20 秒）。'
+  mp4_video_label: 已创建的视频
+  mp4_webm_warning: 此浏览器无法导出 MP4，因此无法直接发布到 X。
   speed: 语速 ({{speed}}倍)
   ssml_billed_hint: 计费字符数，不含标签
   ssml_duration_note: 在 SSML 模式下，较长的停顿 (<break>) 或较慢的语速 (<prosody rate>) 会使音频变长，可能达到 10 分钟的上限。
@@ -751,6 +769,18 @@ textToSpeech:
   title: 创建音频文件
   too_long: 文本过长。
   voice: 语音
+  voicevox_cobaco_illust_notice: 若要将 Vivi-Vivi Cobaco 的插画用作背景，需要在语音条款之外另行确认插画的使用条款。
+  voicevox_credit: '署名：{{credit}}'
+  voicevox_credit_notice: 'VOICEVOX 的语音必须标注“{{credit}}”。'
+  voicevox_disabled_note: 使用 VOICEVOX 时无效
+  voicevox_label: VOICEVOX
+  voicevox_none: 不使用（Amazon Polly）
+  voicevox_option: '{{character}}（{{style}}）'
+  voicevox_ssml_note: VOICEVOX 不支持 SSML（将使用纯文本输入）
+  voicevox_starting: 正在准备 VOICEVOX，请稍候…
+  voicevox_terms: '{{character}} 使用条款'
+  voicevox_timeout: VOICEVOX 的准备耗时较长，请稍后再试。
+  voicevox_x_notice: '发布到 X 时，请在正文中也加入“{{credit}}”。'
 textract:
   clear: 清除
   col_box: 边界框 (left, top, width, height) [0-1]

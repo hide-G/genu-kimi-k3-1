@@ -1178,6 +1178,59 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### VOICEVOX による音声ファイル作成の有効化
+
+「音声ファイル作成」ユースケース (`hiddenUseCases.textToSpeech` で非表示にしていない場合) に、[VOICEVOX](https://voicevox.hiroshiba.jp/) の音声（ブイブイ・コバコなど）を追加できます。VOICEVOX ENGINE は AWS Lambda MicroVMs 上で動かします。`voicevox` パラメータを設定しない場合、VOICEVOX 関連の API ルートと IAM 権限は作成されず、画面にも VOICEVOX は表示されません。
+
+**parameter.ts を編集**
+
+```typescript
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    voicevox: {
+      enabled: true,
+      region: 'ap-northeast-1', // AWS Lambda MicroVMs を使うリージョン (GenU のリージョンと異なっていても構いません)
+      microvmImageArn:
+        'arn:aws:lambda:ap-northeast-1:<アカウントID>:microvm-image:<イメージ名>', // イメージ名ではなく ARN を指定します
+      // enginePort: 50021, // 省略時は 50021
+    },
+  },
+};
+```
+
+**cdk.json を編集**
+
+```json
+{
+  "context": {
+    "voicevox": {
+      "enabled": true,
+      "region": "ap-northeast-1",
+      "microvmImageArn": "arn:aws:lambda:ap-northeast-1:<アカウントID>:microvm-image:<イメージ名>"
+    }
+  }
+}
+```
+
+**MicroVM イメージの作り方**
+
+MicroVM イメージの Dockerfile は次の 1 行です。タグは必ずバージョンを固定してください（`cpu-arm64-0.26.1` からブイブイ・コバコ (styleId 127) が同梱されています）。
+
+```dockerfile
+FROM --platform=linux/arm64 voicevox/voicevox_engine:cpu-arm64-0.26.1
+```
+
+作成したイメージの ARN (`arn:aws:lambda:<リージョン>:<アカウントID>:microvm-image:<イメージ名>`) を `microvmImageArn` に指定します。MicroVM は初回の利用時（キャラクターを選択した時）に GenU が起動し、アイドル状態が続くと自動で停止・終了します。起動直後は数十秒かかることがあり、その間は画面側で自動的にリトライします。
+
+**注意事項**
+
+- `closedNetworkMode` と同時には指定できません（MicroVM のエンドポイントは公開 HTTPS のため）。指定した場合は合成時にエラーになります。
+- **クレジット表記は必須です。** VOICEVOX の音声を公開・投稿する場合は「VOICEVOX:<キャラクター名>」の表記が必要です（[VOICEVOX 音声モデル利用規約](https://github.com/VOICEVOX/voicevox_vvm/blob/main/README.md)）。画面・作成する MP4 の映像内には自動で表示されますが、X などに投稿するときは本文にも入れてください。
+- 利用できるキャラクターは `packages/common/src/application/voicevox.ts` の許可リストに限られます。初期リストは、クレジット表記だけで商用・非商用とも利用できるキャラクターのみです（各規約は再確認してください）。個別の条件があるキャラクターを追加する場合は、事前に各規約を確認してください。
+- ブイブイ・コバコの[利用規約](https://vv-cobaco.com/terms)に従ってください。コバコのイラストを背景に使う場合は、音声とは別にイラストの規約の確認が必要です。
+- VOICEVOX の 1 回あたりの文字数は暫定で 500 文字です。API Gateway のタイムアウト (29 秒) を超えないよう、実測して調整してください。
+- GenU のデプロイ実行者に、AWS Lambda MicroVMs の `lambda:RunMicrovm` などを呼び出せる権限は不要です（`ApiHandler` のロールに付与されます）。
+
 ### 特定のユースケースを非表示にする
 
 以下のオプションで指定できるユースケースは非表示にできます。

@@ -688,6 +688,24 @@ textToSpeech:
   input_text: 음성으로 변환할 텍스트
   language: 언어
   load_voices_error: 음성 목록을 불러오지 못했습니다. 페이지를 새로고침하세요.
+  mp4_create: 🎬 MP4 만들기
+  mp4_creating: 'MP4를 만들고 있습니다... {{percent}}%'
+  mp4_description: X에는 음성 파일만 게시할 수 없으므로, 이미지 또는 텍스트를 배경으로 한 MP4(H.264 + AAC)를 만들 수 있습니다.
+  mp4_done: MP4를 만들었습니다
+  mp4_download: MP4 다운로드
+  mp4_error_decode: 이 브라우저에서는 음성을 읽을 수 없습니다. mp3 또는 wav로 다시 생성해 주세요.
+  mp4_error_fetch: 음성 파일을 가져오지 못했습니다.
+  mp4_error_generic: MP4 만들기에 실패했습니다.
+  mp4_error_unsupported: 이 브라우저는 동영상 만들기를 지원하지 않습니다.
+  mp4_image_alt: 선택한 배경 이미지 미리보기
+  mp4_image_clear: 이미지 해제
+  mp4_image_label: 이미지 (선택)
+  mp4_image_notice: 선택한 이미지의 권리는 사용자 본인의 책임으로 확인해 주세요.
+  mp4_realtime_note: 만드는 데 음성과 같은 길이의 시간이 걸립니다. 완료될 때까지 이 페이지를 열어 두세요.
+  mp4_section_title: X 게시용 MP4
+  mp4_too_long: '동영상 길이가 약 {{seconds}}초가 됩니다. X의 길이 제한(일반 계정은 2분 20초)을 초과할 수 있습니다.'
+  mp4_video_label: 만든 동영상
+  mp4_webm_warning: 이 브라우저는 MP4를 내보낼 수 없어 X에 그대로 게시할 수 없습니다.
   speed: 속도 ({{speed}}배)
   ssml_billed_hint: '과금 대상 문자 수, 태그 제외'
   ssml_duration_note: SSML 모드에서는 긴 일시 정지(<break>)나 느린 속도(<prosody rate>)로 인해 오디오가 길어져 10분 제한에 도달할 수 있습니다.
@@ -771,6 +789,18 @@ textToSpeech:
   title: 음성 파일 생성
   too_long: 텍스트가 너무 깁니다.
   voice: 음성
+  voicevox_cobaco_illust_notice: 브이브이 코바코의 일러스트를 배경으로 사용하려면 음성과는 별도로 일러스트 이용 약관을 확인해야 합니다.
+  voicevox_credit: '크레딧: {{credit}}'
+  voicevox_credit_notice: 'VOICEVOX 음성에는 "{{credit}}" 표기가 필수입니다.'
+  voicevox_disabled_note: VOICEVOX 사용 중에는 비활성화됩니다
+  voicevox_label: VOICEVOX
+  voicevox_none: 사용 안 함 (Amazon Polly)
+  voicevox_option: '{{character}} ({{style}})'
+  voicevox_ssml_note: VOICEVOX에서는 SSML을 사용할 수 없습니다(일반 텍스트로 입력됩니다)
+  voicevox_starting: VOICEVOX를 준비하고 있습니다. 잠시 기다려 주세요...
+  voicevox_terms: '{{character}} 이용 약관'
+  voicevox_timeout: VOICEVOX 준비에 시간이 걸리고 있습니다. 잠시 후 다시 시도해 주세요.
+  voicevox_x_notice: 'X에 게시할 때는 본문에도 "{{credit}}"를 넣어 주세요.'
 textract:
   clear: 지우기
   col_box: 박스 (left, top, width, height) [0-1]

@@ -5510,6 +5510,9 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
     "VideoGenerateModelIds": {
       "Value": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
     },
+    "VoicevoxEnabled": {
+      "Value": "false",
+    },
     "WebUrl": {
       "Value": {
         "Fn::GetAtt": [
@@ -6183,6 +6186,9 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               ],
             },
             "VIDEO_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
+            "VOICEVOX_ENGINE_PORT": "50021",
+            "VOICEVOX_MICROVM_IMAGE_ARN": "",
+            "VOICEVOX_REGION": "",
           },
         },
         "Handler": "run.sh",
@@ -13994,6 +14000,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
           },
           "VITE_APP_USE_CASE_BUILDER_ENABLED": "true",
           "VITE_APP_VIDEO_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
+          "VITE_APP_VOICEVOX_ENABLED": "false",
         },
         "outputEnvFile": false,
         "outputSourceDirectory": "../packages/web/dist",
@@ -19887,6 +19894,9 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
     "VideoGenerateModelIds": {
       "Value": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
     },
+    "VoicevoxEnabled": {
+      "Value": "false",
+    },
     "WebUrl": {
       "Value": {
         "Fn::Join": [
@@ -20521,6 +20531,9 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               ],
             },
             "VIDEO_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
+            "VOICEVOX_ENGINE_PORT": "50021",
+            "VOICEVOX_MICROVM_IMAGE_ARN": "",
+            "VOICEVOX_REGION": "",
           },
         },
         "Handler": "run.sh",
@@ -28185,6 +28198,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
           },
           "VITE_APP_USE_CASE_BUILDER_ENABLED": "true",
           "VITE_APP_VIDEO_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
+          "VITE_APP_VOICEVOX_ENABLED": "false",
         },
         "outputEnvFile": false,
         "outputSourceDirectory": "../packages/web/dist",

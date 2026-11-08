@@ -1133,6 +1133,24 @@ textToSpeech:
   input_text: Text to convert to speech
   language: Language
   load_voices_error: Failed to load the voice list. Please reload the page.
+  mp4_create: 🎬 Create MP4
+  mp4_creating: 'Creating MP4... {{percent}}%'
+  mp4_description: X does not accept audio-only files, so you can create an MP4 (H.264 + AAC) with an image or the text as the background.
+  mp4_done: MP4 created
+  mp4_download: Download MP4
+  mp4_error_decode: This browser could not read the audio. Generate it again as mp3 or wav.
+  mp4_error_fetch: Failed to fetch the audio file.
+  mp4_error_generic: Failed to create the MP4.
+  mp4_error_unsupported: This browser does not support creating videos.
+  mp4_image_alt: Preview of the selected background image
+  mp4_image_clear: Remove image
+  mp4_image_label: Image (optional)
+  mp4_image_notice: You are responsible for the rights to the image you select.
+  mp4_realtime_note: Creation takes as long as the audio. Keep this page open until it finishes.
+  mp4_section_title: MP4 for posting to X
+  mp4_too_long: 'The video will be about {{seconds}} seconds. It may exceed the length limit of X (2 minutes 20 seconds for standard accounts).'
+  mp4_video_label: Created video
+  mp4_webm_warning: This browser cannot write MP4, so the video cannot be posted to X as is.
   speed: Speed ({{speed}}x)
   ssml_billed_hint: 'billed characters, tags excluded'
   ssml_duration_note: 'In SSML mode, long pauses (<break>) and slow rates (<prosody rate>) make the audio longer and can hit the 10-minute limit.'
@@ -1216,6 +1234,18 @@ textToSpeech:
   title: Audio File Creation
   too_long: The text is too long.
   voice: Voice
+  voicevox_cobaco_illust_notice: To use illustrations of Vivi-Vivi Cobaco as a background, check the illustration terms of use separately from the voice terms.
+  voicevox_credit: 'Credit: {{credit}}'
+  voicevox_credit_notice: 'The credit "{{credit}}" is required for VOICEVOX audio.'
+  voicevox_disabled_note: Disabled while VOICEVOX is in use
+  voicevox_label: VOICEVOX
+  voicevox_none: Do not use (Amazon Polly)
+  voicevox_option: '{{character}} ({{style}})'
+  voicevox_ssml_note: SSML is not available with VOICEVOX (plain text is used)
+  voicevox_starting: Preparing VOICEVOX. Please wait...
+  voicevox_terms: 'Terms of use: {{character}}'
+  voicevox_timeout: VOICEVOX is taking a long time to start. Please try again later.
+  voicevox_x_notice: 'When posting to X, also include "{{credit}}" in the post text.'
 textract:
   clear: Clear
   col_box: Box (left, top, width, height) [0-1]

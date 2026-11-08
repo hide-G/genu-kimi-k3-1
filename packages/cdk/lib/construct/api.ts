@@ -79,6 +79,12 @@ export interface BackendApiProps {
   // Speech to Speech
   readonly speechToSpeechTaskFunctionArn?: string;
   readonly speechToSpeechModelIds?: ModelConfiguration[];
+  // VOICEVOX (AWS Lambda MicroVMs)
+  readonly voicevox?: {
+    region: string;
+    microvmImageArn: string;
+    enginePort: number;
+  };
   // IP restrictions
   readonly allowedIpV4AddressRanges?: string[];
   readonly allowedIpV6AddressRanges?: string[];
@@ -184,6 +190,8 @@ export class Api extends Construct {
       '@aws-sdk/client-bedrock-runtime',
       '@aws-sdk/client-bedrock-agent-runtime',
       '@aws-sdk/client-sagemaker-runtime',
+      // Not included in the Lambda runtime's built-in SDK
+      '@aws-sdk/client-lambda-microvms',
     ];
     const bedrockSdkBundling = {
       nodeModules: bedrockSdkModules,
@@ -244,6 +252,10 @@ export class Api extends Construct {
         // Transcribe
         AUDIO_BUCKET_NAME: props.audioBucket?.bucketName ?? '',
         TRANSCRIPT_BUCKET_NAME: props.transcriptBucket?.bucketName ?? '',
+        // VOICEVOX (empty when disabled)
+        VOICEVOX_REGION: props.voicevox?.region ?? '',
+        VOICEVOX_MICROVM_IMAGE_ARN: props.voicevox?.microvmImageArn ?? '',
+        VOICEVOX_ENGINE_PORT: String(props.voicevox?.enginePort ?? 50021),
         // Speech to Speech
         SPEECH_TO_SPEECH_TASK_FUNCTION_ARN:
           props.speechToSpeechTaskFunctionArn ?? '',
@@ -324,6 +336,35 @@ export class Api extends Construct {
         resources: ['*'],
       })
     );
+
+    // VOICEVOX: manage the AWS Lambda MicroVM that runs VOICEVOX ENGINE
+    if (props.voicevox) {
+      const connectorArn = (name: string) =>
+        `arn:aws:lambda:${props.voicevox!.region}:aws:network-connector:aws-network-connector:${name}`;
+      apiHandler.role?.addToPrincipalPolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: [
+            'lambda:RunMicrovm',
+            'lambda:GetMicrovm',
+            'lambda:ListMicrovms',
+            'lambda:CreateMicrovmAuthToken',
+          ],
+          resources: ['*'],
+        })
+      );
+      // Without PassNetworkConnector, RunMicrovm fails with AccessDenied
+      apiHandler.role?.addToPrincipalPolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['lambda:PassNetworkConnector'],
+          resources: [
+            connectorArn('ALL_INGRESS'),
+            connectorArn('INTERNET_EGRESS'),
+          ],
+        })
+      );
+    }
 
     // Grant Textract permissions (OCR tool, synchronous text detection only)
     apiHandler.role?.addToPrincipalPolicy(
@@ -787,6 +828,13 @@ export class Api extends Construct {
     // --- Routes for Textract OCR tool ---
     const textract = api.root.addResource('textract');
     textract.addResource('detect').addMethod('POST');
+
+    // --- Routes for VOICEVOX (only when configured) ---
+    if (props.voicevox) {
+      const voicevox = api.root.addResource('voicevox');
+      voicevox.addResource('warmup').addMethod('POST');
+      voicevox.addResource('synthesize').addMethod('POST');
+    }
 
     // --- Routes from SpeechToSpeech Construct (v5) ---
     api.root.addResource('speech-to-speech').addMethod('POST');

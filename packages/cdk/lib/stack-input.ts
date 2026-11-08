@@ -216,6 +216,22 @@ const baseStackInputSchema = z.object({
   // Tag
   tagKey: z.string().nullish(),
   tagValue: z.string().nullish(),
+  // VOICEVOX text-to-speech (AWS Lambda MicroVMs). Not created when omitted.
+  voicevox: z
+    .object({
+      enabled: z.boolean(),
+      // Region of AWS Lambda MicroVMs (may differ from the stack region)
+      region: z.string().min(1),
+      // ARN of the MicroVM image (arn:aws:lambda:<region>:<account>:microvm-image:<name>)
+      microvmImageArn: z
+        .string()
+        .regex(
+          /^arn:aws[a-z-]*:lambda:[a-z0-9-]+:\d{12}:microvm-image:.+$/,
+          'microvmImageArn must be an ARN like arn:aws:lambda:<region>:<account>:microvm-image:<name>'
+        ),
+      enginePort: z.number().int().min(1).max(65535).default(50021),
+    })
+    .nullish(),
   // Closed network
   closedNetworkMode: z.boolean().default(false),
   closedNetworkVpcIpv4Cidr: z.string().default('10.0.0.0/16'),
@@ -242,6 +258,17 @@ export const stackInputSchema = baseStackInputSchema
     {
       message: 'searchEngine is required when searchApiKey is provided',
       path: ['searchEngine'],
+    }
+  )
+  .refine(
+    (data) => {
+      // The MicroVM endpoint is a public HTTPS endpoint
+      return !(data.voicevox?.enabled && data.closedNetworkMode);
+    },
+    {
+      message:
+        'voicevox cannot be enabled when closedNetworkMode is true (the MicroVM endpoint is public HTTPS)',
+      path: ['voicevox'],
     }
   )
   .refine(

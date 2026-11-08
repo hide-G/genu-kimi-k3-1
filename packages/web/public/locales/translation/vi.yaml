@@ -781,6 +781,24 @@ textToSpeech:
   input_text: Văn bản cần chuyển thành giọng nói
   language: Ngôn ngữ
   load_voices_error: Không thể tải danh sách giọng nói. Vui lòng tải lại trang.
+  mp4_create: 🎬 Tạo MP4
+  mp4_creating: 'Đang tạo MP4... {{percent}}%'
+  mp4_description: X không cho đăng riêng tệp âm thanh, nên bạn có thể tạo MP4 (H.264 + AAC) với nền là hình ảnh hoặc văn bản.
+  mp4_done: Đã tạo MP4
+  mp4_download: Tải MP4
+  mp4_error_decode: Trình duyệt này không đọc được âm thanh. Hãy tạo lại ở định dạng mp3 hoặc wav.
+  mp4_error_fetch: Không thể tải tệp âm thanh.
+  mp4_error_generic: Tạo MP4 thất bại.
+  mp4_error_unsupported: Trình duyệt này không hỗ trợ tạo video.
+  mp4_image_alt: Xem trước hình nền đã chọn
+  mp4_image_clear: Bỏ hình ảnh
+  mp4_image_label: Hình ảnh (tùy chọn)
+  mp4_image_notice: Bạn tự chịu trách nhiệm về quyền đối với hình ảnh đã chọn.
+  mp4_realtime_note: Thời gian tạo bằng độ dài của âm thanh. Hãy giữ trang này mở cho đến khi hoàn tất.
+  mp4_section_title: MP4 để đăng lên X
+  mp4_too_long: 'Video dài khoảng {{seconds}} giây, có thể vượt giới hạn độ dài của X (2 phút 20 giây với tài khoản thông thường).'
+  mp4_video_label: Video đã tạo
+  mp4_webm_warning: Trình duyệt này không xuất được MP4 nên không thể đăng nguyên trạng lên X.
   speed: Tốc độ ({{speed}}x)
   ssml_billed_hint: 'số ký tự tính phí, không gồm thẻ'
   ssml_duration_note: 'Ở chế độ SSML, các khoảng dừng dài (<break>) hoặc tốc độ chậm (<prosody rate>) làm âm thanh dài hơn và có thể chạm giới hạn 10 phút.'
@@ -864,6 +882,18 @@ textToSpeech:
   title: Tạo tệp âm thanh
   too_long: Văn bản quá dài.
   voice: Giọng nói
+  voicevox_cobaco_illust_notice: Nếu dùng hình minh họa của Vivi-Vivi Cobaco làm nền, cần kiểm tra riêng điều khoản sử dụng hình minh họa, tách biệt với điều khoản về giọng nói.
+  voicevox_credit: 'Ghi công: {{credit}}'
+  voicevox_credit_notice: 'Âm thanh VOICEVOX bắt buộc phải ghi "{{credit}}".'
+  voicevox_disabled_note: Bị vô hiệu hóa khi đang dùng VOICEVOX
+  voicevox_label: VOICEVOX
+  voicevox_none: Không dùng (Amazon Polly)
+  voicevox_option: '{{character}} ({{style}})'
+  voicevox_ssml_note: VOICEVOX không hỗ trợ SSML (sử dụng văn bản thường)
+  voicevox_starting: Đang chuẩn bị VOICEVOX. Vui lòng đợi...
+  voicevox_terms: 'Điều khoản sử dụng: {{character}}'
+  voicevox_timeout: VOICEVOX khởi động mất nhiều thời gian. Vui lòng thử lại sau.
+  voicevox_x_notice: 'Khi đăng lên X, hãy ghi cả "{{credit}}" trong nội dung bài đăng.'
 textract:
   clear: Xóa
   col_box: Khung (left, top, width, height) [0-1]

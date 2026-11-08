@@ -956,6 +956,24 @@ textToSpeech:
   input_text: 音声に変換するテキスト
   language: 言語
   load_voices_error: 音声の一覧を取得できませんでした。ページを再読み込みしてください。
+  mp4_create: 🎬 MP4 を作成
+  mp4_creating: 'MP4 を作成しています… {{percent}}%'
+  mp4_description: X には音声ファイルだけを投稿できないため、画像または文章を背景にした MP4（H.264 + AAC）を作成できます。
+  mp4_done: MP4 を作成しました
+  mp4_download: MP4 をダウンロード
+  mp4_error_decode: このブラウザでは音声を読み込めませんでした。mp3 または wav で生成し直してください。
+  mp4_error_fetch: 音声ファイルを取得できませんでした。
+  mp4_error_generic: MP4 の作成に失敗しました。
+  mp4_error_unsupported: このブラウザは動画の作成に対応していません。
+  mp4_image_alt: 選択した背景画像のプレビュー
+  mp4_image_clear: 画像を解除
+  mp4_image_label: 画像（任意）
+  mp4_image_notice: 選択した画像の権利は、あなた自身の責任で確認してください。
+  mp4_realtime_note: 作成には音声と同じ長さの時間がかかります。作成が終わるまでこのページを開いたままにしてください。
+  mp4_section_title: X 投稿用の MP4
+  mp4_too_long: '動画の長さが約 {{seconds}} 秒になります。X の長さ制限（一般アカウントで 2 分 20 秒）を超える可能性があります。'
+  mp4_video_label: 作成した動画
+  mp4_webm_warning: このブラウザは MP4 を書き出せないため X にはそのまま投稿できません。
   speed: 速度 ({{speed}}倍)
   ssml_billed_hint: 課金対象の文字数 (タグを除く)
   ssml_duration_note: SSML モードでは、長い休止 (<break>) や遅い速度 (<prosody rate>) によって音声が長くなり、10 分の上限に達することがあります。
@@ -1039,6 +1057,18 @@ textToSpeech:
   title: 音声ファイル作成
   too_long: テキストが長すぎます。
   voice: 音声
+  voicevox_cobaco_illust_notice: ブイブイ・コバコのイラストを背景に使う場合は、音声とは別にイラストの利用規約の確認が必要です。
+  voicevox_credit: 'クレジット: {{credit}}'
+  voicevox_credit_notice: 'VOICEVOX の音声には「{{credit}}」の表記が必須です。'
+  voicevox_disabled_note: VOICEVOX 使用中は無効です
+  voicevox_label: VOICEVOX
+  voicevox_none: 使わない（Amazon Polly）
+  voicevox_option: '{{character}}（{{style}}）'
+  voicevox_ssml_note: VOICEVOX では SSML は使えません（テキスト入力になります）
+  voicevox_starting: VOICEVOX を準備しています。しばらくお待ちください…
+  voicevox_terms: '{{character}} の利用規約'
+  voicevox_timeout: VOICEVOX の準備に時間がかかっています。しばらくしてからもう一度お試しください。
+  voicevox_x_notice: 'X に投稿するときは本文にも「{{credit}}」を入れてください。'
 textract:
   clear: クリア
   col_box: ボックス (left, top, width, height) [0-1]

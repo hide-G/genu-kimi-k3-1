@@ -1046,6 +1046,59 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### VOICEVOX 음성 파일 생성 활성화
+
+"음성 파일 생성" 사용 사례(`hiddenUseCases.textToSpeech`로 숨기지 않은 경우)에 [VOICEVOX](https://voicevox.hiroshiba.jp/) 음성(브이브이 코바코 등)을 추가할 수 있습니다. VOICEVOX ENGINE은 AWS Lambda MicroVMs에서 실행됩니다. `voicevox` 매개변수를 설정하지 않으면 VOICEVOX 관련 API 경로와 IAM 권한이 생성되지 않으며 화면에도 표시되지 않습니다.
+
+**parameter.ts 편집**
+
+```typescript
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    voicevox: {
+      enabled: true,
+      region: 'ap-northeast-1', // AWS Lambda MicroVMs를 사용하는 리전 (GenU 리전과 달라도 됨)
+      microvmImageArn:
+        'arn:aws:lambda:ap-northeast-1:<계정 ID>:microvm-image:<이미지 이름>', // 이미지 이름이 아닌 ARN을 지정
+      // enginePort: 50021, // 생략 시 50021
+    },
+  },
+};
+```
+
+**cdk.json 편집**
+
+```json
+{
+  "context": {
+    "voicevox": {
+      "enabled": true,
+      "region": "ap-northeast-1",
+      "microvmImageArn": "arn:aws:lambda:ap-northeast-1:<계정 ID>:microvm-image:<이미지 이름>"
+    }
+  }
+}
+```
+
+**MicroVM 이미지 만드는 방법**
+
+MicroVM 이미지의 Dockerfile은 한 줄입니다. 태그는 반드시 버전을 고정하세요(`cpu-arm64-0.26.1`부터 브이브이 코바코(styleId 127)가 포함됩니다).
+
+```dockerfile
+FROM --platform=linux/arm64 voicevox/voicevox_engine:cpu-arm64-0.26.1
+```
+
+만든 이미지의 ARN(`arn:aws:lambda:<리전>:<계정 ID>:microvm-image:<이미지 이름>`)을 `microvmImageArn`에 지정합니다. 캐릭터를 처음 선택할 때 GenU가 MicroVM을 시작하며, 유휴 상태가 지속되면 자동으로 중지·종료됩니다. 시작 직후에는 수십 초가 걸릴 수 있으며 그동안 화면에서 자동으로 재시도합니다.
+
+**주의 사항**
+
+- `closedNetworkMode`와 함께 지정할 수 없습니다(MicroVM 엔드포인트는 공개 HTTPS이기 때문). 함께 지정하면 합성 시 오류가 발생합니다.
+- **크레딧 표기는 필수입니다.** VOICEVOX 음성을 공개·게시할 때는 "VOICEVOX:<캐릭터 이름>" 표기가 필요합니다([VOICEVOX 음성 모델 이용 약관](https://github.com/VOICEVOX/voicevox_vvm/blob/main/README.md)). 화면과 생성한 MP4 영상에는 자동으로 표시되지만, X 등에 게시할 때는 본문에도 넣어 주세요.
+- 사용 가능한 캐릭터는 `packages/common/src/application/voicevox.ts`의 허용 목록으로 제한됩니다. 초기 목록은 크레딧 표기만으로 상업·비상업 모두 이용할 수 있는 캐릭터만 포함합니다(각 약관을 다시 확인하세요). 개별 조건이 있는 캐릭터를 추가할 때는 사전에 각 약관을 확인하세요.
+- [브이브이 코바코 이용 약관](https://vv-cobaco.com/terms)을 따르세요. 코바코 일러스트를 배경으로 사용하려면 음성과 별도로 일러스트 약관을 확인해야 합니다.
+- VOICEVOX의 1회 문자 수 제한은 임시로 500자입니다. API Gateway 타임아웃(29초)을 넘지 않도록 실측하여 조정하세요.
+- 배포 실행자에게 `lambda:RunMicrovm` 등 MicroVM 권한은 필요하지 않습니다(`ApiHandler` 역할에 부여됩니다).
+
 ### 특정 사용 사례 숨기기
 
 다음 옵션으로 사용 사례를 숨길 수 있습니다.
