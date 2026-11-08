@@ -320,7 +320,7 @@ const TextractPage: React.FC = () => {
                     </label>
                     <select
                       id="textract_view_select"
-                      className="rounded border border-black/30 p-1"
+                      className="min-w-32 rounded border border-black/30 bg-white py-1.5 pl-2 pr-10 focus:outline-none"
                       value={view}
                       onChange={(e) => {
                         setView(e.target.value as TextractView);
@@ -330,9 +330,9 @@ const TextractPage: React.FC = () => {
                       <option value="words">{t('textract.view_words')}</option>
                     </select>
                   </div>
-                  <div className="min-w-48 flex-1">
+                  <div className="w-56 max-w-full">
                     <label
-                      className="block text-sm"
+                      className="block whitespace-nowrap text-sm"
                       htmlFor="textract_min_confidence">
                       {t('textract.min_confidence', { value: minConfidence })}
                     </label>
