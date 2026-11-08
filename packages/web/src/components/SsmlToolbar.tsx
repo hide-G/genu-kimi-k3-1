@@ -28,9 +28,9 @@ type Props = {
 };
 
 const selectClassName =
-  'rounded border border-black/30 bg-white px-1 py-1 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-aws-smile';
+  'min-w-[6.5rem] shrink-0 rounded border border-black/30 bg-white py-1 pl-2 pr-8 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-aws-smile';
 const buttonClassName =
-  'rounded border border-black/30 bg-white px-2 py-1 text-sm hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-aws-smile disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white';
+  'shrink-0 whitespace-nowrap rounded border border-black/30 bg-white px-2 py-1 text-sm hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-aws-smile disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white';
 
 const ToolButton: React.FC<{
   engine: PollyEngine | '';
@@ -90,7 +90,7 @@ const SsmlToolbar: React.FC<Props> = (props) => {
 
   const placeholderText = t('textToSpeech.ssml_placeholder_text');
 
-  const group = 'flex items-center gap-1';
+  const group = 'flex shrink-0 items-center gap-1';
 
   return (
     <div
