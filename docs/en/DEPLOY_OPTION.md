@@ -1180,6 +1180,8 @@ const envs: Record<string, Partial<StackInput>> = {
 
 About audio file creation: Generated audio files are saved in the shared file bucket (`BUCKET_NAME`) and are **not deleted automatically**, the same as chat attachments. The presigned download URL expires after 3600 seconds, but the object itself remains in the bucket until it is removed manually (or by an S3 lifecycle rule if the administrator adds one).
 
+SSML input for audio file creation: Switch the input mode to "SSML" to control pronunciation and pauses with SSML tags such as `<break>` (pause), `<sub>` (substitute reading) and `<phoneme>` (pronunciation). An SSML guide and insert tools are shown on the page. Tags that the selected engine does not support (for example `<emphasis>` with the neural engine) and tags that Amazon Polly never supports are rejected before the request is sent. In SSML mode, the billed characters (tags excluded) must be 3000 or less and the whole text including tags must be 6000 characters or less. Long pauses and slow rates make the audio longer, so the 10-minute limit of Amazon Polly can be reached. For details, see the [Amazon Polly SSML documentation](https://docs.aws.amazon.com/polly/latest/dg/ssml.html).
+
 ## Use Case Builder Configuration
 
 The Use Case Builder is enabled by default and can be accessed from the "Builder Mode" option displayed on the screen after deployment. To disable the Use Case Builder, specify `false` for the parameter `useCaseBuilderEnabled`. (Default is `true`)

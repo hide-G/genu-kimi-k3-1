@@ -21,7 +21,7 @@ import {
   buildSpeechInput,
   isWithinRequestLimit,
   mapPollyError,
-  validateSynthesizeRequest,
+  validateSynthesizeRequestDetailed,
 } from './utils/pollyUtils';
 
 const headers = {
@@ -51,14 +51,21 @@ export const handler = async (
       return badRequest('Request body must be valid JSON.');
     }
 
-    const validationError = validateSynthesizeRequest(req);
+    const validationError = validateSynthesizeRequestDetailed(req);
     if (validationError) {
-      return badRequest(validationError);
+      return badRequest(validationError.message, validationError.code);
     }
-    const { text, voiceId, engine, languageCode, outputFormat, speed } =
-      req as SynthesizeSpeechRequest;
+    const {
+      text,
+      textType,
+      voiceId,
+      engine,
+      languageCode,
+      outputFormat,
+      speed,
+    } = req as SynthesizeSpeechRequest;
 
-    const input = buildSpeechInput(text, speed);
+    const input = buildSpeechInput(text, speed, textType);
     if (!isWithinRequestLimit(input.text)) {
       const mapped = mapPollyError({ name: 'TextLengthExceededException' });
       return badRequest(mapped.message, mapped.code);

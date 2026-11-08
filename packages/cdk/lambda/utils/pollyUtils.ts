@@ -3,6 +3,12 @@ import type {
   PollyOutputFormat,
   SynthesizeSpeechRequest,
 } from 'generative-ai-use-cases';
+import {
+  countBilledCharacters,
+  describeSsmlIssue,
+  validateSsml,
+  wrapSpeak,
+} from './ssmlUtils';
 
 // Amazon Polly SynthesizeSpeech accepts up to 3000 billed characters per request
 export const MAX_TEXT_LENGTH = 3000;
@@ -34,15 +40,21 @@ export const escapeXml = (text: string): string =>
 
 /**
  * Build the text sent to Polly.
- * SSML is used only when the speed is not 100%.
+ * In plain text mode, SSML is used only when the speed is not 100%.
+ * In SSML mode, the text is the user's SSML: it is neither escaped nor
+ * wrapped again (only wrapped with <speak> when missing) and the speed is ignored.
  */
 export const buildSpeechInput = (
   text: string,
-  speed: number
+  speed: number,
+  textType: 'text' | 'ssml' = 'text'
 ): { text: string; textType: 'text' | 'ssml' } => {
   // Characters that are invalid in XML 1.0 (control characters other than
   // tab, LF and CR) are removed before building the request text
   const cleaned = removeInvalidXmlChars(text);
+  if (textType === 'ssml') {
+    return { text: wrapSpeak(cleaned), textType: 'ssml' };
+  }
   const rate = Math.round(speed * 100);
   if (rate === 100) {
     return { text: cleaned, textType: 'text' };
@@ -193,35 +205,63 @@ export const isWithinRequestLimit = (requestText: string): boolean =>
 
 export const validateSynthesizeRequest = (
   req: Partial<SynthesizeSpeechRequest> | null | undefined
-): string | null => {
+): string | null => validateSynthesizeRequestDetailed(req)?.message ?? null;
+
+/**
+ * Same as validateSynthesizeRequest, but also returns the error code
+ * (INVALID_REQUEST, TEXT_TOO_LONG or INVALID_SSML).
+ */
+export const validateSynthesizeRequestDetailed = (
+  req: Partial<SynthesizeSpeechRequest> | null | undefined
+): { message: string; code: string } | null => {
+  const invalid = (message: string, code = 'INVALID_REQUEST') => ({
+    message,
+    code,
+  });
   if (!req || typeof req !== 'object') {
-    return 'Request body is required.';
+    return invalid('Request body is required.');
   }
   if (typeof req.text !== 'string' || req.text.trim().length === 0) {
-    return 'text is required.';
+    return invalid('text is required.');
   }
-  // Count by code points (not UTF-16 units) so that it matches what the user sees
-  const length = Array.from(req.text).length;
+  if (
+    req.textType !== undefined &&
+    req.textType !== 'text' &&
+    req.textType !== 'ssml'
+  ) {
+    return invalid("textType must be 'text' or 'ssml'.");
+  }
+  const isSsml = req.textType === 'ssml';
+  // Count by code points (not UTF-16 units) so that it matches what the user sees.
+  // In SSML mode, tags are not billed and are not counted.
+  const length = isSsml
+    ? countBilledCharacters(removeInvalidXmlChars(req.text))
+    : Array.from(req.text).length;
   if (length > MAX_TEXT_LENGTH) {
-    return `text must be ${MAX_TEXT_LENGTH} characters or less (received ${length}).`;
+    return invalid(
+      `text must be ${MAX_TEXT_LENGTH} characters or less (received ${length}).`,
+      isSsml ? 'TEXT_TOO_LONG' : 'INVALID_REQUEST'
+    );
   }
   if (
     typeof req.voiceId !== 'string' ||
     !/^[A-Za-z]{1,32}$/.test(req.voiceId)
   ) {
-    return 'voiceId is invalid.';
+    return invalid('voiceId is invalid.');
   }
   if (!req.engine || !ENGINES.includes(req.engine)) {
-    return `engine must be one of ${ENGINES.join(', ')}.`;
+    return invalid(`engine must be one of ${ENGINES.join(', ')}.`);
   }
   if (
     typeof req.languageCode !== 'string' ||
     !/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(req.languageCode)
   ) {
-    return 'languageCode is invalid.';
+    return invalid('languageCode is invalid.');
   }
   if (!req.outputFormat || !(req.outputFormat in OUTPUT_FORMATS)) {
-    return `outputFormat must be one of ${Object.keys(OUTPUT_FORMATS).join(', ')}.`;
+    return invalid(
+      `outputFormat must be one of ${Object.keys(OUTPUT_FORMATS).join(', ')}.`
+    );
   }
   if (
     typeof req.speed !== 'number' ||
@@ -229,7 +269,15 @@ export const validateSynthesizeRequest = (
     req.speed < MIN_SPEED ||
     req.speed > MAX_SPEED
   ) {
-    return `speed must be between ${MIN_SPEED} and ${MAX_SPEED}.`;
+    return invalid(`speed must be between ${MIN_SPEED} and ${MAX_SPEED}.`);
+  }
+  if (isSsml) {
+    // Tags the Polly engine does not support, forbidden tags and malformed
+    // SSML are rejected here, before calling Polly
+    const issue = validateSsml(removeInvalidXmlChars(req.text), req.engine);
+    if (issue) {
+      return invalid(describeSsmlIssue(issue), 'INVALID_SSML');
+    }
   }
   return null;
 };

@@ -1,3 +1,5 @@
+/* eslint-disable i18nhelper/no-jp-string */
+// The Japanese examples are SSML samples, not UI text.
 const mockPollySend = jest.fn();
 const mockS3Send = jest.fn();
 
@@ -133,6 +135,81 @@ describe('pollySynthesize', () => {
     expect(res.statusCode).toBe(400);
     expect(JSON.parse(res.body).code).toBe('TEXT_TOO_LONG');
     expect(mockPollySend).not.toHaveBeenCalled();
+  });
+
+  it('rejects an unescaped & in SSML mode without calling Polly', async () => {
+    const res = await synthesizeHandler(
+      event({
+        text: '<sub alias="ジェンユー">GenU</sub> & <break time="1s"/>',
+        textType: 'ssml',
+        voiceId: 'Kazuha',
+        engine: 'neural',
+        languageCode: 'ja-JP',
+        outputFormat: 'mp3',
+        speed: 1.5,
+      })
+    );
+    expect(res.statusCode).toBe(400);
+    expect(JSON.parse(res.body).code).toBe('INVALID_SSML');
+    expect(mockPollySend).not.toHaveBeenCalled();
+  });
+
+  it('calls Polly with SSML text type and the unmodified SSML', async () => {
+    mockPollySend.mockResolvedValueOnce({
+      AudioStream: { transformToByteArray: async () => new Uint8Array([1]) },
+      RequestCharacters: 4,
+    });
+    mockS3Send.mockResolvedValueOnce({});
+    const res = await synthesizeHandler(
+      event({
+        text: '<sub alias="ジェンユー">GenU</sub>は&amp;です',
+        textType: 'ssml',
+        voiceId: 'Kazuha',
+        engine: 'neural',
+        languageCode: 'ja-JP',
+        outputFormat: 'mp3',
+        speed: 1.5,
+      })
+    );
+    expect(res.statusCode).toBe(200);
+    const input = mockPollySend.mock.calls[0][0].input;
+    expect(input.TextType).toBe('ssml');
+    expect(input.Text).toBe(
+      '<speak><sub alias="ジェンユー">GenU</sub>は&amp;です</speak>'
+    );
+  });
+
+  it('returns TEXT_TOO_LONG when SSML tags push the request over 6000 characters', async () => {
+    const res = await synthesizeHandler(
+      event({
+        text: '<break time="1s"/>'.repeat(400),
+        textType: 'ssml',
+        voiceId: 'Joanna',
+        engine: 'neural',
+        languageCode: 'en-US',
+        outputFormat: 'mp3',
+        speed: 1,
+      })
+    );
+    expect(res.statusCode).toBe(400);
+    expect(JSON.parse(res.body).code).toBe('TEXT_TOO_LONG');
+    expect(mockPollySend).not.toHaveBeenCalled();
+  });
+
+  it('returns TEXT_TOO_LONG when the billed characters exceed 3000', async () => {
+    const res = await synthesizeHandler(
+      event({
+        text: `<p>${'a'.repeat(3001)}</p>`,
+        textType: 'ssml',
+        voiceId: 'Joanna',
+        engine: 'neural',
+        languageCode: 'en-US',
+        outputFormat: 'mp3',
+        speed: 1,
+      })
+    );
+    expect(res.statusCode).toBe(400);
+    expect(JSON.parse(res.body).code).toBe('TEXT_TOO_LONG');
   });
 
   it('maps Polly errors to a detailed response', async () => {

@@ -6,6 +6,7 @@ import {
   mapPollyError,
   removeInvalidXmlChars,
   validateSynthesizeRequest,
+  validateSynthesizeRequestDetailed,
 } from '../../lambda/utils/pollyUtils';
 
 const validRequest = {
@@ -177,5 +178,121 @@ describe('mapPollyError', () => {
         message: 'Internal Server Error',
       });
     }
+  });
+});
+
+describe('SSML mode', () => {
+  const ssmlRequest = { ...validRequest, textType: 'ssml' as const };
+
+  it('does not escape or re-wrap the user SSML and ignores the speed', () => {
+    expect(buildSpeechInput('A & B <break time="1s"/>', 1.5, 'ssml')).toEqual({
+      text: '<speak>A & B <break time="1s"/></speak>',
+      textType: 'ssml',
+    });
+    expect(buildSpeechInput('<speak>Hi</speak>', 0.5, 'ssml')).toEqual({
+      text: '<speak>Hi</speak>',
+      textType: 'ssml',
+    });
+  });
+
+  it('removes invalid XML characters in SSML mode', () => {
+    expect(buildSpeechInput('a\u0001b', 1, 'ssml').text).toBe(
+      '<speak>ab</speak>'
+    );
+  });
+
+  it('keeps the plain mode output unchanged', () => {
+    expect(buildSpeechInput('a & b', 1)).toEqual({
+      text: 'a & b',
+      textType: 'text',
+    });
+    expect(buildSpeechInput('a & b', 1.5, 'text')).toEqual({
+      text: '<speak><prosody rate="150%">a &amp; b</prosody></speak>',
+      textType: 'ssml',
+    });
+  });
+
+  it('accepts a valid SSML request and a request without textType', () => {
+    expect(
+      validateSynthesizeRequest({
+        ...ssmlRequest,
+        text: 'Hello <break time="1s"/> world',
+      })
+    ).toBeNull();
+    expect(validateSynthesizeRequest(validRequest)).toBeNull();
+  });
+
+  it('rejects an invalid textType', () => {
+    expect(
+      validateSynthesizeRequest({
+        ...validRequest,
+        textType: 'html' as unknown as 'ssml',
+      })
+    ).toMatch(/textType/);
+  });
+
+  it('counts only billed characters against the 3000 limit', () => {
+    const tags = '<break time="1s"/>';
+    // 3000 billed characters + many tags is accepted by the billed-characters check
+    expect(
+      validateSynthesizeRequest({
+        ...ssmlRequest,
+        text: `${'a'.repeat(3000)}${tags}`,
+      })
+    ).toBeNull();
+    expect(
+      validateSynthesizeRequestDetailed({
+        ...ssmlRequest,
+        text: `${'a'.repeat(3001)}${tags}`,
+      })
+    ).toMatchObject({ code: 'TEXT_TOO_LONG' });
+  });
+
+  it('keeps INVALID_REQUEST for plain text over the limit', () => {
+    expect(
+      validateSynthesizeRequestDetailed({
+        ...validRequest,
+        text: 'a'.repeat(3001),
+      })
+    ).toMatchObject({ code: 'INVALID_REQUEST' });
+  });
+
+  it('rejects unsupported tags for the engine with INVALID_SSML', () => {
+    const r = validateSynthesizeRequestDetailed({
+      ...ssmlRequest,
+      engine: 'neural',
+      text: '<emphasis>a</emphasis>',
+    });
+    expect(r?.code).toBe('INVALID_SSML');
+    expect(r?.message).toContain('<emphasis>');
+    expect(r?.message).toContain('neural');
+    expect(
+      validateSynthesizeRequest({
+        ...ssmlRequest,
+        engine: 'standard',
+        text: '<emphasis>a</emphasis>',
+      })
+    ).toBeNull();
+  });
+
+  it('rejects malformed SSML', () => {
+    expect(
+      validateSynthesizeRequestDetailed({ ...ssmlRequest, text: '<p>a' })?.code
+    ).toBe('INVALID_SSML');
+  });
+
+  it('checks the 6000 character limit of the whole request', () => {
+    // 2000 billed characters (&amp; is one) but 10000 characters in total
+    const text = '&amp;'.repeat(2000);
+    expect(validateSynthesizeRequest({ ...ssmlRequest, text })).toBeNull();
+    expect(isWithinRequestLimit(buildSpeechInput(text, 1, 'ssml').text)).toBe(
+      false
+    );
+    expect(
+      isWithinRequestLimit(buildSpeechInput('a'.repeat(5985), 1, 'ssml').text)
+    ).toBe(true);
+    expect(
+      isWithinRequestLimit(buildSpeechInput('a'.repeat(5986), 1, 'ssml').text)
+    ).toBe(false);
   });
 });
