@@ -203,6 +203,51 @@ export const mapPollyError = (
 export const isWithinRequestLimit = (requestText: string): boolean =>
   Array.from(requestText).length <= MAX_REQUEST_LENGTH;
 
+/**
+ * Client local time as yyyyMMdd-HHmmss. Strict format plus range checks, because
+ * the value ends up in the S3 key and in the Content-Disposition header.
+ */
+export const isValidTimestamp = (value: unknown): value is string => {
+  if (typeof value !== 'string' || !/^\d{8}-\d{6}$/.test(value)) return false;
+  const month = Number(value.slice(4, 6));
+  const day = Number(value.slice(6, 8));
+  const hour = Number(value.slice(9, 11));
+  const minute = Number(value.slice(11, 13));
+  const second = Number(value.slice(13, 15));
+  return (
+    month >= 1 &&
+    month <= 12 &&
+    day >= 1 &&
+    day <= 31 &&
+    hour <= 23 &&
+    minute <= 59 &&
+    second <= 59
+  );
+};
+
+/** Formats a date as yyyyMMdd-HHmmss in UTC. */
+export const formatUtcTimestamp = (date: Date): string => {
+  const p = (n: number, l = 2) => String(n).padStart(l, '0');
+  return (
+    `${p(date.getUTCFullYear(), 4)}${p(date.getUTCMonth() + 1)}${p(date.getUTCDate())}` +
+    `-${p(date.getUTCHours())}${p(date.getUTCMinutes())}${p(date.getUTCSeconds())}`
+  );
+};
+
+/**
+ * speech-<voice>-<yyyyMMdd>-<HHmmss>.<ext>
+ * A missing or invalid timestamp falls back to the current time in UTC.
+ */
+export const buildFileName = (
+  voiceId: string,
+  extension: string,
+  timestamp?: unknown,
+  now: Date = new Date()
+): string => {
+  const ts = isValidTimestamp(timestamp) ? timestamp : formatUtcTimestamp(now);
+  return `speech-${voiceId.toLowerCase()}-${ts}.${extension}`;
+};
+
 export const validateSynthesizeRequest = (
   req: Partial<SynthesizeSpeechRequest> | null | undefined
 ): string | null => validateSynthesizeRequestDetailed(req)?.message ?? null;
@@ -271,6 +316,7 @@ export const validateSynthesizeRequestDetailed = (
   ) {
     return invalid(`speed must be between ${MIN_SPEED} and ${MAX_SPEED}.`);
   }
+  // timestamp is optional; an invalid value is ignored (UTC fallback in buildFileName)
   if (isSsml) {
     // Tags the Polly engine does not support, forbidden tags and malformed
     // SSML are rejected here, before calling Polly

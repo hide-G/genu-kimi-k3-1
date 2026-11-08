@@ -31,6 +31,8 @@ export type SynthesizeSpeechRequest = {
   languageCode: string;
   outputFormat: PollyOutputFormat;
   speed: number;
+  // Client local time (yyyyMMdd-HHmmss) used in the file name. Optional.
+  timestamp?: string;
 };
 
 export type SynthesizeSpeechResponse = {

@@ -274,6 +274,7 @@ describe('pollySynthesize', () => {
         languageCode: 'en-US',
         outputFormat: 'mp3',
         speed: 1.5,
+        timestamp: '20261108-173045',
       })
     );
     const body = JSON.parse(res.body);
@@ -284,6 +285,31 @@ describe('pollySynthesize', () => {
     expect(body.url).toBe('https://example.com/signed');
     expect(body.contentType).toBe('audio/mpeg');
     expect(body.characters).toBe(5);
-    expect(body.key).toMatch(/^[0-9a-f-]{36}\/speech-joanna\.mp3$/);
+    expect(body.fileName).toBe('speech-joanna-20261108-173045.mp3');
+    expect(body.key).toMatch(
+      /^[0-9a-f-]{36}\/speech-joanna-20261108-173045\.mp3$/
+    );
+  });
+
+  it('falls back to a UTC timestamp when it is invalid', async () => {
+    mockPollySend.mockResolvedValue({
+      AudioStream: { transformToByteArray: async () => new Uint8Array([1]) },
+    });
+    mockS3Send.mockResolvedValue({});
+    const res = await synthesizeHandler(
+      event({
+        text: 'Hello',
+        voiceId: 'Joanna',
+        engine: 'neural',
+        languageCode: 'en-US',
+        outputFormat: 'mp3',
+        speed: 1,
+        timestamp: '../evil";',
+      })
+    );
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.body).fileName).toMatch(
+      /^speech-joanna-\d{8}-\d{6}\.mp3$/
+    );
   });
 });

@@ -7,6 +7,9 @@ import {
   removeInvalidXmlChars,
   validateSynthesizeRequest,
   validateSynthesizeRequestDetailed,
+  buildFileName,
+  formatUtcTimestamp,
+  isValidTimestamp,
 } from '../../lambda/utils/pollyUtils';
 
 const validRequest = {
@@ -294,5 +297,59 @@ describe('SSML mode', () => {
     expect(
       isWithinRequestLimit(buildSpeechInput('a'.repeat(5986), 1, 'ssml').text)
     ).toBe(false);
+  });
+});
+
+describe('file name timestamp', () => {
+  it('formats UTC with zero padding, midnight and end of year', () => {
+    expect(formatUtcTimestamp(new Date(Date.UTC(2026, 0, 2, 3, 4, 5)))).toBe(
+      '20260102-030405'
+    );
+    expect(formatUtcTimestamp(new Date(Date.UTC(2026, 10, 8, 0, 0, 0)))).toBe(
+      '20261108-000000'
+    );
+    expect(
+      formatUtcTimestamp(new Date(Date.UTC(2026, 11, 31, 23, 59, 59)))
+    ).toBe('20261231-235959');
+  });
+
+  it('accepts valid timestamps', () => {
+    for (const v of ['20261108-173045', '20260101-000000', '20261231-235959']) {
+      expect(isValidTimestamp(v)).toBe(true);
+    }
+  });
+
+  it('rejects invalid timestamps', () => {
+    for (const v of [
+      '2026-11-08',
+      '20261108-1730',
+      '20261308-000000',
+      '20261108-246000',
+      '20261100-000000',
+      '20261108-006000',
+      '20261108-000060',
+      '../20261108-17304',
+      '20261108-173045"',
+      '20261108-173045\n',
+      '20261108-173045;',
+      '../../20261108-173045',
+      undefined,
+      20261108,
+    ]) {
+      expect(isValidTimestamp(v)).toBe(false);
+    }
+  });
+
+  it('builds the file name from the client timestamp', () => {
+    expect(buildFileName('Kazuha', 'mp3', '20261108-173045')).toBe(
+      'speech-kazuha-20261108-173045.mp3'
+    );
+  });
+
+  it('falls back to the current UTC time when missing or invalid', () => {
+    const now = new Date(Date.UTC(2026, 10, 8, 17, 30, 45));
+    const expected = 'speech-joanna-20261108-173045.ogg';
+    expect(buildFileName('Joanna', 'ogg', undefined, now)).toBe(expected);
+    expect(buildFileName('Joanna', 'ogg', '../x";', now)).toBe(expected);
   });
 });

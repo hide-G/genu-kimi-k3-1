@@ -18,6 +18,7 @@ import {
 } from 'generative-ai-use-cases';
 import {
   OUTPUT_FORMATS,
+  buildFileName,
   buildSpeechInput,
   isWithinRequestLimit,
   mapPollyError,
@@ -63,6 +64,7 @@ export const handler = async (
       languageCode,
       outputFormat,
       speed,
+      timestamp,
     } = req as SynthesizeSpeechRequest;
 
     const input = buildSpeechInput(text, speed, textType);
@@ -91,7 +93,7 @@ export const handler = async (
     stage = 'storage';
 
     // Same key convention as getFileUploadSignedUrl: XXXXX/filename
-    const fileName = `speech-${voiceId.toLowerCase()}.${format.extension}`;
+    const fileName = buildFileName(voiceId, format.extension, timestamp);
     const key = `${uuidv4()}/${fileName}`;
 
     const s3 = new S3Client({});

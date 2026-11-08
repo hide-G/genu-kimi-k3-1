@@ -22,6 +22,10 @@ import Button from '../components/Button';
 import Alert from '../components/Alert';
 import useTextToSpeechApi from '../hooks/useTextToSpeechApi';
 import { getLanguageLabel } from '../utils/pollyLanguageLabel';
+import {
+  formatLocalTimestamp,
+  makeUniqueFileName,
+} from '../utils/audioFileName';
 import { getPollyErrorMessage } from '../utils/pollyErrorMessage';
 import SsmlToolbar, { SsmlEditFn } from '../components/SsmlToolbar';
 import SsmlGuideDialog from '../components/SsmlGuideDialog';
@@ -70,6 +74,7 @@ const TextToSpeechPage: React.FC = () => {
   const [inputMode, setInputMode] = useState<'text' | 'ssml'>('text');
   const [guideOpen, setGuideOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const lastFileName = useRef<string | null>(null);
   const pendingSelection = useRef<{
     start: number;
     end: number;
@@ -201,18 +206,21 @@ const TextToSpeechPage: React.FC = () => {
     setError('');
     setResult(null);
     try {
-      setResult(
-        await synthesize({
-          text,
-          voiceId,
-          textType: inputMode,
-          engine,
-          languageCode,
-          outputFormat,
-          // The speed is set with <prosody rate> in SSML mode
-          speed: isSsml ? 1 : speed,
-        })
-      );
+      const res = await synthesize({
+        text,
+        voiceId,
+        textType: inputMode,
+        engine,
+        languageCode,
+        outputFormat,
+        // The speed is set with <prosody rate> in SSML mode
+        speed: isSsml ? 1 : speed,
+        // The time the user sees (local time zone), used in the file name
+        timestamp: formatLocalTimestamp(new Date()),
+      });
+      const fileName = makeUniqueFileName(res.fileName, lastFileName.current);
+      lastFileName.current = fileName;
+      setResult({ ...res, fileName });
     } catch (e) {
       setError(getPollyErrorMessage(e, t));
     } finally {
