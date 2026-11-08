@@ -26,6 +26,7 @@ import GenerateImagePage from './pages/GenerateImagePage';
 import GenerateVideoPage from './pages/GenerateVideoPage';
 import OptimizePromptPage from './pages/OptimizePromptPage';
 import TranscribePage from './pages/TranscribePage';
+import TextToSpeechPage from './pages/TextToSpeechPage';
 import TextractPage from './pages/TextractPage';
 import MeetingMinutesPage from './pages/MeetingMinutesPage';
 import AgentChatPage from './pages/AgentChatPage';
@@ -166,6 +167,12 @@ const routes: RouteObject[] = [
     path: '/transcribe',
     element: <TranscribePage />,
   },
+  enabled('textToSpeech')
+    ? {
+        path: '/text-to-speech',
+        element: <TextToSpeechPage />,
+      }
+    : null,
   enabled('textract')
     ? {
         path: '/textract',

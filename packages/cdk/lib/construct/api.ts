@@ -316,6 +316,15 @@ export class Api extends Construct {
       })
     );
 
+    // Grant Polly permissions for the text-to-speech tool
+    apiHandler.role?.addToPrincipalPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['polly:SynthesizeSpeech', 'polly:DescribeVoices'],
+        resources: ['*'],
+      })
+    );
+
     // Grant Textract permissions (OCR tool, synchronous text detection only)
     apiHandler.role?.addToPrincipalPolicy(
       new PolicyStatement({
@@ -771,6 +780,10 @@ export class Api extends Construct {
     transcribe.addResource('url').addMethod('POST');
     transcribe.addResource('result').addResource('{jobName}').addMethod('GET');
 
+    // --- Routes for Polly text-to-speech ---
+    const polly = api.root.addResource('polly');
+    polly.addResource('voices').addMethod('GET');
+    polly.addResource('synthesize').addMethod('POST');
     // --- Routes for Textract OCR tool ---
     const textract = api.root.addResource('textract');
     textract.addResource('detect').addMethod('POST');
