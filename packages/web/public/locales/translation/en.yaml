@@ -951,7 +951,7 @@ navigation:
   speechRecognition: Speech Recognition
   summary: Summary
   textGeneration: Text Generation
-  textToSpeech: Audio File Creation (Amazon Polly)
+  textToSpeech: Audio File Creation
   translation: Translation
   videoAnalysis: Video Analysis
   videoGeneration: Video Generation
@@ -1107,8 +1107,23 @@ svg:
 textToSpeech:
   audio_label: Generated audio
   character_count: '{{current}} / {{max}} characters'
+  description: Audio is generated with Amazon Polly.
   download: Download
+  duration_note: 'Amazon Polly cuts off audio longer than 10 minutes. With a slow speed or long text, the end may be missing; split the text in that case.'
   engine: Engine
+  error_engine_not_supported: "The selected engine is not compatible with the selected voice, or is not available in this stack's Region (for example, Long-form voices are available only in us-east-1). Choose another engine or voice."
+  error_generic: Failed to generate the audio. Try again later.
+  error_internal_error: An error occurred on the server. Try again later.
+  error_invalid_next_token: The pagination token is invalid. Reload the page.
+  error_invalid_request: The request is invalid. Check your input.
+  error_invalid_sample_rate: The sample rate is not valid for the selected output format.
+  error_invalid_ssml: The SSML is invalid. Check the tag syntax and spelling.
+  error_language_not_supported: The selected language is not supported by the selected voice. Choose another language or voice.
+  error_polly_access_denied: 'The server is not allowed to call Amazon Polly. Ask the administrator to check the IAM permissions polly:SynthesizeSpeech and polly:DescribeVoices.'
+  error_polly_service_failure: Amazon Polly failed temporarily. Try again later.
+  error_storage_error: Failed to save the generated audio file. Try again later.
+  error_text_too_long: The text exceeds the Amazon Polly limit (6000 characters in total and 3000 billed characters). Shorten the text.
+  error_throttled: Too many requests to Amazon Polly (about 8 requests per second per account and Region for neural and generative voices). Wait a moment and try again.
   format: Output format
   generate: Generate audio
   input_text: Text to convert to speech
@@ -1118,7 +1133,7 @@ textToSpeech:
   status_done: Audio generation completed
   status_generating: Generating audio
   text_placeholder: Enter the text to convert to speech
-  title: Audio File Creation (Amazon Polly)
+  title: Audio File Creation
   too_long: The text is too long.
   voice: Voice
 transcribe:

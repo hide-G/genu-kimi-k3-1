@@ -544,7 +544,7 @@ navigation:
   speechRecognition: 语音识别
   summary: 摘要
   textGeneration: 文本生成
-  textToSpeech: 音频文件创建 (Amazon Polly)
+  textToSpeech: 创建音频文件
   translation: 翻译
   videoAnalysis: 视频分析
   videoGeneration: 视频生成
@@ -642,8 +642,23 @@ summarize:
 textToSpeech:
   audio_label: 生成的音频
   character_count: '{{current}} / {{max}} 个字符'
+  description: 使用 Amazon Polly 生成音频。
   download: 下载
+  duration_note: Amazon Polly 会截断超过 10 分钟的音频。语速较慢或文本较长时，结尾可能会缺失，请拆分文本。
   engine: 引擎
+  error_engine_not_supported: 所选引擎与所选语音不兼容，或在此堆栈的区域中不可用（例如，Long-form 语音仅在 us-east-1 中可用）。请选择其他引擎或语音。
+  error_generic: 生成音频失败。请稍后再试。
+  error_internal_error: 服务器发生错误。请稍后再试。
+  error_invalid_next_token: 分页令牌无效。请重新加载页面。
+  error_invalid_request: 请求无效。请检查输入内容。
+  error_invalid_sample_rate: 采样率对所选输出格式无效。
+  error_invalid_ssml: SSML 无效。请检查标签语法和拼写。
+  error_language_not_supported: 所选语音不支持所选语言。请选择其他语言或语音。
+  error_polly_access_denied: '服务器无权调用 Amazon Polly。请让管理员检查 IAM 权限 polly:SynthesizeSpeech 和 polly:DescribeVoices。'
+  error_polly_service_failure: Amazon Polly 暂时出现故障。请稍后再试。
+  error_storage_error: 保存生成的音频文件失败。请稍后再试。
+  error_text_too_long: 文本超出 Amazon Polly 的限制（请求总计 6000 个字符，计费 3000 个字符）。请缩短文本。
+  error_throttled: 对 Amazon Polly 的请求过多（Neural 和 Generative 语音每个账户和区域约每秒 8 个请求）。请稍候再试。
   format: 输出格式
   generate: 生成音频
   input_text: 要转换为语音的文本
@@ -653,7 +668,7 @@ textToSpeech:
   status_done: 音频生成完成
   status_generating: 正在生成音频
   text_placeholder: 请输入要转换为语音的文本
-  title: 音频文件创建 (Amazon Polly)
+  title: 创建音频文件
   too_long: 文本过长。
   voice: 语音
 transcribe:

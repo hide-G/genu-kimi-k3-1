@@ -2,6 +2,9 @@ import {
   MAX_TEXT_LENGTH,
   buildSpeechInput,
   escapeXml,
+  isWithinRequestLimit,
+  mapPollyError,
+  removeInvalidXmlChars,
   validateSynthesizeRequest,
 } from '../../lambda/utils/pollyUtils';
 
@@ -97,5 +100,82 @@ describe('validateSynthesizeRequest', () => {
     expect(
       validateSynthesizeRequest({ ...validRequest, languageCode: '??' })
     ).toMatch(/languageCode/);
+  });
+});
+
+describe('removeInvalidXmlChars / request limit', () => {
+  it('removes control characters except tab, LF and CR', () => {
+    expect(removeInvalidXmlChars('a\u0000b\u0008c\td\ne\rf\u001Fg\u000B')).toBe(
+      'abc\td\ne\rfg'
+    );
+    expect(buildSpeechInput('a\u0001b', 1).text).toBe('ab');
+    expect(buildSpeechInput('a\u0001<b', 1.5).text).toContain('a&lt;b');
+  });
+
+  it('checks the final request text including escaping and tags', () => {
+    expect(isWithinRequestLimit('a'.repeat(6000))).toBe(true);
+    expect(isWithinRequestLimit('a'.repeat(6001))).toBe(false);
+    // 2000 "&" are 2000 chars as text but 10000 chars once escaped
+    expect(
+      isWithinRequestLimit(buildSpeechInput('&'.repeat(2000), 1.5).text)
+    ).toBe(false);
+  });
+});
+
+describe('mapPollyError', () => {
+  const err = (name: string, httpStatusCode?: number) => ({
+    name,
+    message: 'arn:aws:iam::123456789012:user/secret failed',
+    $metadata: { httpStatusCode },
+  });
+
+  it.each([
+    ['EngineNotSupportedException', 400, 400, 'ENGINE_NOT_SUPPORTED'],
+    ['LanguageNotSupportedException', 400, 400, 'LANGUAGE_NOT_SUPPORTED'],
+    ['InvalidSsmlException', 400, 400, 'INVALID_SSML'],
+    ['TextLengthExceededException', 400, 400, 'TEXT_TOO_LONG'],
+    ['InvalidSampleRateException', 400, 400, 'INVALID_SAMPLE_RATE'],
+    ['ThrottlingException', 400, 429, 'THROTTLED'],
+    ['TooManyRequestsException', 429, 429, 'THROTTLED'],
+    ['SomethingThrottledError', 500, 429, 'THROTTLED'],
+    ['InvalidNextTokenException', 400, 400, 'INVALID_NEXT_TOKEN'],
+    ['ServiceFailureException', 500, 502, 'POLLY_SERVICE_FAILURE'],
+    ['AccessDeniedException', 403, 500, 'POLLY_ACCESS_DENIED'],
+    ['UnrecognizedClientException', 400, 500, 'POLLY_ACCESS_DENIED'],
+  ])('%s (HTTP %s) -> %s %s', (name, http, statusCode, code) => {
+    const res = mapPollyError(err(name, http));
+    expect(res.statusCode).toBe(statusCode);
+    expect(res.code).toBe(code);
+    expect(res.message).not.toContain('arn:aws');
+    expect(res.message).not.toContain('123456789012');
+  });
+
+  it('mentions the required IAM permissions for access denied', () => {
+    const { message } = mapPollyError(err('AccessDeniedException', 403));
+    expect(message).toContain('polly:SynthesizeSpeech');
+    expect(message).toContain('polly:DescribeVoices');
+  });
+
+  it('maps S3 errors while saving to STORAGE_ERROR, even if access denied', () => {
+    expect(mapPollyError(err('NoSuchBucket', 404)).code).toBe('STORAGE_ERROR');
+    const res = mapPollyError(err('AccessDenied', 403), { storage: true });
+    expect(res).toMatchObject({ statusCode: 500, code: 'STORAGE_ERROR' });
+  });
+
+  it('returns INTERNAL_ERROR without the original message for unknown errors', () => {
+    for (const e of [
+      new Error('secret-bucket arn:aws:s3:::x'),
+      err('SomethingElse', 418),
+      null,
+      undefined,
+      'string error',
+    ]) {
+      const res = mapPollyError(e);
+      expect(res).toEqual({
+        statusCode: 500,
+        code: 'INTERNAL_ERROR',
+        message: 'Internal Server Error',
+      });
+    }
   });
 });

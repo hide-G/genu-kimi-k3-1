@@ -1148,7 +1148,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // Hide diagram generation
       meetingMinutes: true, // Hide meeting minutes generation
       voiceChat: true, // Hide voice chat
-      textToSpeech: true, // Hide text-to-speech (Amazon Polly)
+      textToSpeech: true, // Hide audio file creation
     },
   },
 };
@@ -1177,6 +1177,8 @@ const envs: Record<string, Partial<StackInput>> = {
   }
 }
 ```
+
+About audio file creation: Generated audio files are saved in the shared file bucket (`BUCKET_NAME`) and are **not deleted automatically**, the same as chat attachments. The presigned download URL expires after 3600 seconds, but the object itself remains in the bucket until it is removed manually (or by an S3 lifecycle rule if the administrator adds one).
 
 ## Use Case Builder Configuration
 

@@ -930,8 +930,23 @@ svg:
 textToSpeech:
   audio_label: 生成された音声
   character_count: '{{current}} / {{max}} 文字'
+  description: Amazon Polly を使って音声ファイルを生成します。
   download: ダウンロード
+  duration_note: Amazon Polly は 10 分を超える音声を途中で打ち切ります。速度を遅くした場合や文章が長い場合は、末尾が欠けることがあるので、テキストを分割してください。
   engine: エンジン
+  error_engine_not_supported: '選択したエンジンは、選択した音声と互換性がないか、このスタックのリージョンでは利用できません (例: Long-form の音声は us-east-1 でのみ利用できます)。別のエンジンまたは音声を選択してください。'
+  error_generic: 音声ファイルを生成できませんでした。しばらくしてから再試行してください。
+  error_internal_error: サーバーでエラーが発生しました。しばらくしてから再試行してください。
+  error_invalid_next_token: ページ送りトークンが無効です。ページを再読み込みしてください。
+  error_invalid_request: リクエストの内容が正しくありません。入力内容を確認してください。
+  error_invalid_sample_rate: サンプルレートが出力形式に対して無効です。
+  error_invalid_ssml: SSML が無効です。タグの構文とスペルを確認してください。
+  error_language_not_supported: 選択した言語は、選択した音声ではサポートされていません。別の言語または音声を選択してください。
+  error_polly_access_denied: 'サーバーに Amazon Polly を呼び出す権限がありません。管理者に IAM 権限 polly:SynthesizeSpeech と polly:DescribeVoices を確認するよう依頼してください。'
+  error_polly_service_failure: Amazon Polly で一時的な障害が発生しました。しばらくしてから再試行してください。
+  error_storage_error: 生成した音声ファイルの保存に失敗しました。しばらくしてから再試行してください。
+  error_text_too_long: テキストが Amazon Polly の上限を超えています (リクエスト全体で 6000 文字、課金対象 3000 文字)。テキストを短くしてください。
+  error_throttled: Amazon Polly へのリクエストが多すぎます (Neural と Generative の音声は、アカウントとリージョンごとに毎秒 8 リクエスト程度)。しばらく待ってから再試行してください。
   format: 出力形式
   generate: 音声を生成
   input_text: 音声に変換するテキスト
@@ -941,7 +956,7 @@ textToSpeech:
   status_done: 音声の生成が完了しました
   status_generating: 音声を生成しています
   text_placeholder: 音声に変換するテキストを入力してください
-  title: 音声ファイル作成 (Amazon Polly)
+  title: 音声ファイル作成
   too_long: テキストが長すぎます。
   voice: 音声
 transcribe:

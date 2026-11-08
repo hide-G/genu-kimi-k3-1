@@ -11,16 +11,21 @@ import Button from '../components/Button';
 import Alert from '../components/Alert';
 import useTextToSpeechApi from '../hooks/useTextToSpeechApi';
 import { getLanguageLabel } from '../utils/pollyLanguageLabel';
+import { getPollyErrorMessage } from '../utils/pollyErrorMessage';
 
 // Maximum characters per synchronous Polly request
 const MAX_TEXT_LENGTH = 3000;
 const MIN_SPEED = 0.5;
 const MAX_SPEED = 2.0;
+// Default engine order, cheapest sensible choice first. Polly prices per 1M
+// characters: standard $4, neural $16, generative $30, long-form $100.
+// Neural is the default (good quality at a moderate price); the others are
+// only used when the voice does not support neural.
 const ENGINE_PRIORITY: PollyEngine[] = [
-  'generative',
-  'long-form',
   'neural',
   'standard',
+  'generative',
+  'long-form',
 ];
 const OUTPUT_FORMATS: PollyOutputFormat[] = ['mp3', 'ogg_vorbis'];
 // UI language -> Polly language code
@@ -90,13 +95,10 @@ const TextToSpeechPage: React.FC = () => {
 
   const voices = useMemo(() => {
     const list = voiceData?.voices ?? [];
-    // Voices of the preferred engine come first
-    const rank = (engines: PollyEngine[] = []) => {
-      const ranks = engines
-        .map((e) => ENGINE_PRIORITY.indexOf(e))
-        .filter((r) => r >= 0);
-      return ranks.length > 0 ? Math.min(...ranks) : ENGINE_PRIORITY.length;
-    };
+    // Voices that support neural (the default engine) come first, so the
+    // default voice of a language is a neural one when it exists
+    const rank = (engines: PollyEngine[] = []) =>
+      engines.includes('neural') ? 0 : 1;
     return [...list].sort(
       (a, b) =>
         rank(a.supportedEngines) - rank(b.supportedEngines) ||
@@ -125,7 +127,7 @@ const TextToSpeechPage: React.FC = () => {
     [selectedVoice]
   );
 
-  // Default engine is the best one available for the voice
+  // Default engine: neural when supported, otherwise the next cheapest
   useEffect(() => {
     if (engines.length === 0) return;
     if (!engine || !engines.includes(engine)) {
@@ -160,10 +162,7 @@ const TextToSpeechPage: React.FC = () => {
         })
       );
     } catch (e) {
-      const message =
-        (e as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? (e as Error)?.message;
-      setError(message || t('error'));
+      setError(getPollyErrorMessage(e, t));
     } finally {
       setLoading(false);
     }
@@ -180,6 +179,11 @@ const TextToSpeechPage: React.FC = () => {
   ]);
 
   const loadError = languageError || voiceError;
+  const loadErrorMessage = loadError
+    ? (loadError as { response?: unknown })?.response
+      ? getPollyErrorMessage(loadError, t)
+      : t('textToSpeech.load_voices_error')
+    : '';
 
   const statusMessage = loading
     ? t('textToSpeech.status_generating')
@@ -196,6 +200,9 @@ const TextToSpeechPage: React.FC = () => {
       </div>
       <div className="col-span-12 col-start-1 mx-2 lg:col-span-10 lg:col-start-2 xl:col-span-10 xl:col-start-2">
         <Card label={t('textToSpeech.input_text')}>
+          <p className="mb-2 text-sm text-gray-500">
+            {t('textToSpeech.description')}
+          </p>
           <label className="sr-only" htmlFor="tts-text">
             {t('textToSpeech.input_text')}
           </label>
@@ -211,12 +218,15 @@ const TextToSpeechPage: React.FC = () => {
           />
           <div
             id="tts-counter"
-            className={`mb-4 text-right text-sm ${overLimit ? 'font-bold text-red-600' : 'text-gray-500'}`}>
+            className={`mb-1 text-right text-sm ${overLimit ? 'font-bold text-red-600' : 'text-gray-500'}`}>
             {t('textToSpeech.character_count', {
               current: characters,
               max: MAX_TEXT_LENGTH,
             })}
             {overLimit && ` ${t('textToSpeech.too_long')}`}
+          </div>
+          <div id="tts-duration-note" className="mb-4 text-sm text-gray-500">
+            {t('textToSpeech.duration_note')}
           </div>
 
           <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -330,9 +340,7 @@ const TextToSpeechPage: React.FC = () => {
               title={t('error')}
               className="mt-4"
               onDissmiss={error ? () => setError('') : undefined}>
-              <div role="alert">
-                {error || t('textToSpeech.load_voices_error')}
-              </div>
+              <div role="alert">{error || loadErrorMessage}</div>
             </Alert>
           )}
 

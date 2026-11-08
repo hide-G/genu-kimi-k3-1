@@ -513,7 +513,7 @@ navigation:
   speechRecognition: 음성 인식
   summary: 요약
   textGeneration: 텍스트 생성
-  textToSpeech: 음성 파일 생성 (Amazon Polly)
+  textToSpeech: 음성 파일 생성
   translation: 번역
   videoAnalysis: 비디오 분석
   videoGeneration: 비디오 생성
@@ -662,8 +662,23 @@ svg:
 textToSpeech:
   audio_label: 생성된 음성
   character_count: '{{current}} / {{max}} 자'
+  description: Amazon Polly를 사용하여 음성 파일을 생성합니다.
   download: 다운로드
+  duration_note: Amazon Polly는 10분을 초과하는 음성을 중간에 잘라냅니다. 속도를 느리게 하거나 텍스트가 길면 끝부분이 누락될 수 있으므로 텍스트를 나누어 주세요.
   engine: 엔진
+  error_engine_not_supported: '선택한 엔진이 선택한 음성과 호환되지 않거나 이 스택의 리전에서 사용할 수 없습니다 (예: Long-form 음성은 us-east-1에서만 사용할 수 있습니다). 다른 엔진 또는 음성을 선택하세요.'
+  error_generic: 음성을 생성하지 못했습니다. 나중에 다시 시도하세요.
+  error_internal_error: 서버에서 오류가 발생했습니다. 나중에 다시 시도하세요.
+  error_invalid_next_token: 페이지 토큰이 올바르지 않습니다. 페이지를 새로고침하세요.
+  error_invalid_request: 요청이 올바르지 않습니다. 입력 내용을 확인하세요.
+  error_invalid_sample_rate: 선택한 출력 형식에 유효하지 않은 샘플 레이트입니다.
+  error_invalid_ssml: SSML이 올바르지 않습니다. 태그 구문과 철자를 확인하세요.
+  error_language_not_supported: 선택한 언어는 선택한 음성에서 지원되지 않습니다. 다른 언어 또는 음성을 선택하세요.
+  error_polly_access_denied: '서버에 Amazon Polly를 호출할 권한이 없습니다. 관리자에게 IAM 권한 polly:SynthesizeSpeech 및 polly:DescribeVoices를 확인하도록 요청하세요.'
+  error_polly_service_failure: Amazon Polly에서 일시적인 장애가 발생했습니다. 나중에 다시 시도하세요.
+  error_storage_error: 생성된 음성 파일을 저장하지 못했습니다. 나중에 다시 시도하세요.
+  error_text_too_long: '텍스트가 Amazon Polly 제한(요청 전체 6000자, 과금 대상 3000자)을 초과했습니다. 텍스트를 줄이세요.'
+  error_throttled: Amazon Polly에 대한 요청이 너무 많습니다 (Neural 및 Generative 음성은 계정 및 리전당 초당 약 8건). 잠시 기다린 후 다시 시도하세요.
   format: 출력 형식
   generate: 음성 생성
   input_text: 음성으로 변환할 텍스트
@@ -673,7 +688,7 @@ textToSpeech:
   status_done: 음성 생성이 완료되었습니다
   status_generating: 음성을 생성하는 중입니다
   text_placeholder: 음성으로 변환할 텍스트를 입력하세요
-  title: 음성 파일 생성 (Amazon Polly)
+  title: 음성 파일 생성
   too_long: 텍스트가 너무 깁니다.
   voice: 음성
 transcribe:

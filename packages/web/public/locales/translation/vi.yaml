@@ -639,7 +639,7 @@ navigation:
   speechRecognition: Nhận dạng giọng nói
   summary: Tóm tắt
   textGeneration: Tạo văn bản
-  textToSpeech: Tạo tệp âm thanh (Amazon Polly)
+  textToSpeech: Tạo tệp âm thanh
   translation: Dịch thuật
   videoAnalysis: Phân tích video
   videoGeneration: Tạo video
@@ -755,8 +755,23 @@ summarize:
 textToSpeech:
   audio_label: Âm thanh đã tạo
   character_count: '{{current}} / {{max}} ký tự'
+  description: Âm thanh được tạo bằng Amazon Polly.
   download: Tải xuống
+  duration_note: 'Amazon Polly cắt âm thanh dài hơn 10 phút. Với tốc độ chậm hoặc văn bản dài, phần cuối có thể bị thiếu; hãy chia nhỏ văn bản trong trường hợp đó.'
   engine: Công cụ
+  error_engine_not_supported: 'Engine đã chọn không tương thích với giọng nói đã chọn hoặc không khả dụng ở Region của stack này (ví dụ: giọng Long-form chỉ khả dụng ở us-east-1). Hãy chọn engine hoặc giọng nói khác.'
+  error_generic: Không thể tạo âm thanh. Hãy thử lại sau.
+  error_internal_error: Đã xảy ra lỗi trên máy chủ. Hãy thử lại sau.
+  error_invalid_next_token: Token phân trang không hợp lệ. Hãy tải lại trang.
+  error_invalid_request: Yêu cầu không hợp lệ. Hãy kiểm tra nội dung đã nhập.
+  error_invalid_sample_rate: Tần số lấy mẫu không hợp lệ với định dạng đầu ra đã chọn.
+  error_invalid_ssml: SSML không hợp lệ. Hãy kiểm tra cú pháp và chính tả của thẻ.
+  error_language_not_supported: Giọng nói đã chọn không hỗ trợ ngôn ngữ đã chọn. Hãy chọn ngôn ngữ hoặc giọng nói khác.
+  error_polly_access_denied: 'Máy chủ không được phép gọi Amazon Polly. Hãy nhờ quản trị viên kiểm tra quyền IAM polly:SynthesizeSpeech và polly:DescribeVoices.'
+  error_polly_service_failure: Amazon Polly gặp lỗi tạm thời. Hãy thử lại sau.
+  error_storage_error: Không thể lưu tệp âm thanh đã tạo. Hãy thử lại sau.
+  error_text_too_long: Văn bản vượt quá giới hạn của Amazon Polly (tổng 6000 ký tự và 3000 ký tự tính phí). Hãy rút ngắn văn bản.
+  error_throttled: Quá nhiều yêu cầu tới Amazon Polly (khoảng 8 yêu cầu mỗi giây cho mỗi tài khoản và Region với giọng neural và generative). Hãy đợi một lát rồi thử lại.
   format: Định dạng đầu ra
   generate: Tạo âm thanh
   input_text: Văn bản cần chuyển thành giọng nói
@@ -766,7 +781,7 @@ textToSpeech:
   status_done: Đã tạo xong âm thanh
   status_generating: Đang tạo âm thanh
   text_placeholder: Nhập văn bản cần chuyển thành giọng nói
-  title: Tạo tệp âm thanh (Amazon Polly)
+  title: Tạo tệp âm thanh
   too_long: Văn bản quá dài.
   voice: Giọng nói
 transcribe:

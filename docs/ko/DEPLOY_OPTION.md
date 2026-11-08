@@ -1035,7 +1035,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // 다이어그램 생성 숨기기
       meetingMinutes: true, // 회의록 생성 숨기기
       voiceChat: true, // 음성 채팅 숨기기
-      textToSpeech: true, // 음성 파일 생성(Amazon Polly) 숨기기
+      textToSpeech: true, // 음성 파일 생성 숨기기
     },
   },
 };
@@ -1064,6 +1064,8 @@ const envs: Record<string, Partial<StackInput>> = {
   }
 }
 ```
+
+음성 파일 생성 관련: 생성된 음성 파일은 공유 파일 버킷(`BUCKET_NAME`)에 저장되며, 채팅 첨부 파일과 마찬가지로 **자동으로 삭제되지 않습니다**. 다운로드용 서명된 URL은 3600초 후에 만료되지만, 객체 자체는 수동으로 삭제할 때까지(관리자가 S3 수명 주기 규칙을 추가한 경우 해당 규칙에 따라 삭제될 때까지) 버킷에 남아 있습니다.
 
 ## Use Case Builder 구성
 

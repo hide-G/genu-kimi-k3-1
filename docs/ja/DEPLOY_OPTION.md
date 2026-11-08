@@ -1167,7 +1167,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // ダイアグラム生成を非表示
       meetingMinutes: true, // 議事録生成を非表示
       voiceChat: true, // 音声チャットを非表示
-      textToSpeech: true, // 音声ファイル作成(Amazon Polly)を非表示
+      textToSpeech: true, // 音声ファイル作成を非表示
     },
   },
 };
@@ -1196,6 +1196,8 @@ const envs: Record<string, Partial<StackInput>> = {
   }
 }
 ```
+
+音声ファイル作成について: 生成した音声ファイルは共有のファイルバケット (`BUCKET_NAME`) に保存され、チャットの添付ファイルと同様に**自動では削除されません**。ダウンロード用の署名付き URL の有効期限は 3600 秒ですが、オブジェクト自体は手動で削除するまで (管理者が S3 ライフサイクルルールを追加した場合はそのルールに従って削除されるまで) バケットに残ります。
 
 ## ユースケースビルダーの設定
 

@@ -656,7 +656,7 @@ navigation:
   speechRecognition: แปลงเสียงพูดเป็นข้อความ
   summary: สรุป
   textGeneration: การสร้างข้อความ
-  textToSpeech: สร้างไฟล์เสียง (Amazon Polly)
+  textToSpeech: สร้างไฟล์เสียง
   translation: การแปล
   videoAnalysis: การวิเคราะห์วิดีโอ
   videoGeneration: การสร้างวิดีโอ
@@ -777,8 +777,23 @@ summarize:
 textToSpeech:
   audio_label: เสียงที่สร้างขึ้น
   character_count: '{{current}} / {{max}} ตัวอักษร'
+  description: สร้างเสียงด้วย Amazon Polly
   download: ดาวน์โหลด
+  duration_note: Amazon Polly จะตัดเสียงที่ยาวเกิน 10 นาที หากตั้งความเร็วช้าหรือข้อความยาว ส่วนท้ายอาจขาดหายไป ในกรณีนั้นโปรดแบ่งข้อความ
   engine: เอนจิน
+  error_engine_not_supported: เอนจินที่เลือกไม่รองรับเสียงที่เลือก หรือไม่สามารถใช้ได้ในภูมิภาคของสแตกนี้ (เช่น เสียง Long-form ใช้ได้เฉพาะใน us-east-1) โปรดเลือกเอนจินหรือเสียงอื่น
+  error_generic: สร้างเสียงไม่สำเร็จ โปรดลองอีกครั้งในภายหลัง
+  error_internal_error: เกิดข้อผิดพลาดบนเซิร์ฟเวอร์ โปรดลองอีกครั้งในภายหลัง
+  error_invalid_next_token: โทเค็นการแบ่งหน้าไม่ถูกต้อง โปรดโหลดหน้าใหม่
+  error_invalid_request: คำขอไม่ถูกต้อง โปรดตรวจสอบข้อมูลที่ป้อน
+  error_invalid_sample_rate: อัตราการสุ่มตัวอย่างไม่ถูกต้องสำหรับรูปแบบเอาต์พุตที่เลือก
+  error_invalid_ssml: SSML ไม่ถูกต้อง โปรดตรวจสอบไวยากรณ์และการสะกดของแท็ก
+  error_language_not_supported: เสียงที่เลือกไม่รองรับภาษาที่เลือก โปรดเลือกภาษาหรือเสียงอื่น
+  error_polly_access_denied: 'เซิร์ฟเวอร์ไม่ได้รับอนุญาตให้เรียกใช้ Amazon Polly โปรดแจ้งผู้ดูแลระบบให้ตรวจสอบสิทธิ์ IAM polly:SynthesizeSpeech และ polly:DescribeVoices'
+  error_polly_service_failure: Amazon Polly ล้มเหลวชั่วคราว โปรดลองอีกครั้งในภายหลัง
+  error_storage_error: บันทึกไฟล์เสียงที่สร้างไม่สำเร็จ โปรดลองอีกครั้งในภายหลัง
+  error_text_too_long: ข้อความเกินขีดจำกัดของ Amazon Polly (รวม 6000 ตัวอักษร และ 3000 ตัวอักษรที่คิดค่าบริการ) โปรดทำให้ข้อความสั้นลง
+  error_throttled: มีคำขอไปยัง Amazon Polly มากเกินไป (ประมาณ 8 คำขอต่อวินาทีต่อบัญชีและภูมิภาคสำหรับเสียง Neural และ Generative) โปรดรอสักครู่แล้วลองอีกครั้ง
   format: รูปแบบเอาต์พุต
   generate: สร้างเสียง
   input_text: ข้อความที่จะแปลงเป็นเสียง
@@ -788,7 +803,7 @@ textToSpeech:
   status_done: สร้างเสียงเสร็จสมบูรณ์
   status_generating: กำลังสร้างเสียง
   text_placeholder: ป้อนข้อความที่จะแปลงเป็นเสียง
-  title: สร้างไฟล์เสียง (Amazon Polly)
+  title: สร้างไฟล์เสียง
   too_long: ข้อความยาวเกินไป
   voice: เสียง
 transcribe:

@@ -29,6 +29,20 @@ beforeEach(() => {
 });
 
 describe('pollyVoices', () => {
+  it('maps throttling to 429 THROTTLED', async () => {
+    mockPollySend.mockRejectedValueOnce(
+      Object.assign(new Error('x'), {
+        name: 'ThrottlingException',
+        $metadata: { httpStatusCode: 400 },
+      })
+    );
+    const res = await voicesHandler({
+      queryStringParameters: null,
+    } as unknown as APIGatewayProxyEvent);
+    expect(res.statusCode).toBe(429);
+    expect(JSON.parse(res.body).code).toBe('THROTTLED');
+  });
+
   it('follows NextToken and returns languages and voices', async () => {
     mockPollySend
       .mockResolvedValueOnce({
@@ -101,7 +115,71 @@ describe('pollySynthesize', () => {
     );
     expect(res.statusCode).toBe(400);
     expect(JSON.parse(res.body).message).toContain('3000');
+    expect(JSON.parse(res.body).code).toBe('INVALID_REQUEST');
     expect(mockPollySend).not.toHaveBeenCalled();
+  });
+
+  it('returns TEXT_TOO_LONG when the escaped SSML exceeds 6000 characters', async () => {
+    const res = await synthesizeHandler(
+      event({
+        text: '&'.repeat(2000),
+        voiceId: 'Joanna',
+        engine: 'neural',
+        languageCode: 'en-US',
+        outputFormat: 'mp3',
+        speed: 1.5,
+      })
+    );
+    expect(res.statusCode).toBe(400);
+    expect(JSON.parse(res.body).code).toBe('TEXT_TOO_LONG');
+    expect(mockPollySend).not.toHaveBeenCalled();
+  });
+
+  it('maps Polly errors to a detailed response', async () => {
+    mockPollySend.mockRejectedValueOnce(
+      Object.assign(new Error('raw aws text'), {
+        name: 'EngineNotSupportedException',
+        $metadata: { httpStatusCode: 400 },
+      })
+    );
+    const res = await synthesizeHandler(
+      event({
+        text: 'Hello',
+        voiceId: 'Joanna',
+        engine: 'long-form',
+        languageCode: 'en-US',
+        outputFormat: 'mp3',
+        speed: 1,
+      })
+    );
+    expect(res.statusCode).toBe(400);
+    const body = JSON.parse(res.body);
+    expect(body.code).toBe('ENGINE_NOT_SUPPORTED');
+    expect(body.message).not.toContain('raw aws text');
+  });
+
+  it('returns STORAGE_ERROR when saving to S3 fails', async () => {
+    mockPollySend.mockResolvedValueOnce({
+      AudioStream: { transformToByteArray: async () => new Uint8Array([1]) },
+    });
+    mockS3Send.mockRejectedValueOnce(
+      Object.assign(new Error('denied arn:aws:s3:::b'), {
+        name: 'AccessDenied',
+        $metadata: { httpStatusCode: 403 },
+      })
+    );
+    const res = await synthesizeHandler(
+      event({
+        text: 'Hello',
+        voiceId: 'Joanna',
+        engine: 'neural',
+        languageCode: 'en-US',
+        outputFormat: 'mp3',
+        speed: 1,
+      })
+    );
+    expect(res.statusCode).toBe(500);
+    expect(JSON.parse(res.body).code).toBe('STORAGE_ERROR');
   });
 
   it('synthesizes, stores in S3 and returns a presigned url', async () => {

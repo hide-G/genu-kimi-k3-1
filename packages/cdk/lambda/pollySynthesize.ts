@@ -19,6 +19,8 @@ import {
 import {
   OUTPUT_FORMATS,
   buildSpeechInput,
+  isWithinRequestLimit,
+  mapPollyError,
   validateSynthesizeRequest,
 } from './utils/pollyUtils';
 
@@ -27,15 +29,20 @@ const headers = {
   'Access-Control-Allow-Origin': '*',
 };
 
-const badRequest = (message: string): APIGatewayProxyResult => ({
+const badRequest = (
+  message: string,
+  code = 'INVALID_REQUEST'
+): APIGatewayProxyResult => ({
   statusCode: 400,
   headers,
-  body: JSON.stringify({ message }),
+  body: JSON.stringify({ message, code }),
 });
 
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
+  // Errors after Polly returned the audio come from S3 (PutObject / presign)
+  let stage: 'polly' | 'storage' = 'polly';
   try {
     let req: Partial<SynthesizeSpeechRequest>;
     try {
@@ -52,6 +59,10 @@ export const handler = async (
       req as SynthesizeSpeechRequest;
 
     const input = buildSpeechInput(text, speed);
+    if (!isWithinRequestLimit(input.text)) {
+      const mapped = mapPollyError({ name: 'TextLengthExceededException' });
+      return badRequest(mapped.message, mapped.code);
+    }
     const format = OUTPUT_FORMATS[outputFormat];
 
     const polly = new PollyClient({});
@@ -70,6 +81,7 @@ export const handler = async (
       throw new Error('Polly returned an empty audio stream.');
     }
     const audio = await speech.AudioStream.transformToByteArray();
+    stage = 'storage';
 
     // Same key convention as getFileUploadSignedUrl: XXXXX/filename
     const fileName = `speech-${voiceId.toLowerCase()}.${format.extension}`;
@@ -109,10 +121,13 @@ export const handler = async (
     return { statusCode: 200, headers, body: JSON.stringify(response) };
   } catch (error) {
     console.log(error);
+    const { statusCode, message, code } = mapPollyError(error, {
+      storage: stage === 'storage',
+    });
     return {
-      statusCode: 500,
+      statusCode,
       headers,
-      body: JSON.stringify({ message: 'Internal Server Error' }),
+      body: JSON.stringify({ message, code }),
     };
   }
 };
