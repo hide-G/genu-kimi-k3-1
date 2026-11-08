@@ -5,6 +5,7 @@ import { PiSpinnerGap } from 'react-icons/pi';
 type Props = BaseProps & {
   title?: string;
   'aria-label'?: string;
+  'aria-busy'?: boolean;
   disabled?: boolean;
   loading?: boolean;
   outlined?: boolean;
@@ -26,6 +27,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>((props, ref) => {
       }`}
       title={props.title}
       aria-label={props['aria-label']}
+      aria-busy={props['aria-busy']}
       onClick={props.onClick}
       disabled={props.disabled || props.loading}>
       {props.loading && <PiSpinnerGap className="mr-2 animate-spin" />}
