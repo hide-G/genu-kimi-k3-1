@@ -10,6 +10,7 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import Alert from '../components/Alert';
 import useTextToSpeechApi from '../hooks/useTextToSpeechApi';
+import { getLanguageLabel } from '../utils/pollyLanguageLabel';
 
 // Maximum characters per synchronous Polly request
 const MAX_TEXT_LENGTH = 3000;
@@ -66,7 +67,7 @@ const TextToSpeechPage: React.FC = () => {
     () =>
       (languageData?.languages ?? []).map((l) => ({
         value: l.code,
-        label: `${languageDisplayNames?.of(l.code) ?? l.name} (${l.code})`,
+        label: getLanguageLabel(languageDisplayNames, l.code, l.name),
       })),
     [languageData, languageDisplayNames]
   );
@@ -90,12 +91,16 @@ const TextToSpeechPage: React.FC = () => {
   const voices = useMemo(() => {
     const list = voiceData?.voices ?? [];
     // Voices of the preferred engine come first
-    const rank = (engines: PollyEngine[]) =>
-      Math.min(...engines.map((e) => ENGINE_PRIORITY.indexOf(e)));
+    const rank = (engines: PollyEngine[] = []) => {
+      const ranks = engines
+        .map((e) => ENGINE_PRIORITY.indexOf(e))
+        .filter((r) => r >= 0);
+      return ranks.length > 0 ? Math.min(...ranks) : ENGINE_PRIORITY.length;
+    };
     return [...list].sort(
       (a, b) =>
         rank(a.supportedEngines) - rank(b.supportedEngines) ||
-        a.name.localeCompare(b.name)
+        (a.name ?? a.id).localeCompare(b.name ?? b.id)
     );
   }, [voiceData]);
 
@@ -115,7 +120,7 @@ const TextToSpeechPage: React.FC = () => {
   const engines = useMemo(
     () =>
       ENGINE_PRIORITY.filter((e) =>
-        selectedVoice?.supportedEngines.includes(e)
+        selectedVoice?.supportedEngines?.includes(e)
       ),
     [selectedVoice]
   );

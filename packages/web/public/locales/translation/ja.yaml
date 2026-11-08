@@ -797,7 +797,7 @@ navigation:
   speechRecognition: 音声認識
   summary: 要約
   textGeneration: 文章生成
-  textToSpeech: 音声ファイル作成 (Amazon Polly)
+  textToSpeech: 音声ファイル作成
   translation: 翻訳
   videoAnalysis: 映像分析
   videoGeneration: 動画生成
